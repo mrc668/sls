@@ -12,14 +12,19 @@ ssh:
     - watch:
       - file: /etc/ssh/sshd_config
 
+{% set definedRole = salt['grains.filter_by']({
+    'unibasegw': {'src': 'sshd_config_passwords' },
+    'mrcdesktop': {'src': 'sshd_config_passwords' },
+    'empty': {'src': 'sshd_config' },
+  }, 
+    default='empty',
+    grain='localhost'
+  ) 
+%}
+
 /etc/ssh/sshd_config:
   file.managed:
-    {% if grains['localhost'] == 'unibasegw' 
-    or grains['localhost'] == 'mrcdesktop'  %}
-      - source: salt://managedFiles/sshd_config_passwords
-    {% else  %}
-      - source: salt://managedFiles/sshd_config
-    {% endif %}
+    - source: salt://managedFiles/{{definedRole.src}}
     - user: root
     - group: root
     - mode: 644
