@@ -1,14 +1,19 @@
+{% set definedOS = salt['grains.filter_by']({
+    'CentOS': {'pkgname': 'openssh-server', 'svcname': 'sshd' },
+    'empty': {'pkgname': 'openssh-server', 'svcname': 'sshd' },
+  }, 
+    default='empty',
+    grain='os'
+  ) 
+%}
+
 ssh:
   pkg:
     - installed
-    {% if grains['os'] == 'CentOS' or grains['os'] == 'RedHat' %}
-    - name: openssh-server
-    {% endif %}
-  service: 
-    {% if grains['os'] == 'CentOS' or grains['os'] == 'RedHat' %}
-    - name: sshd
-    {% endif %}
-    - running
+    - name: {{definedOS.pkgname}}
+  service.running: 
+    - name: {{definedOS.svcname}}
+    - enable: true
     - watch:
       - file: /etc/ssh/sshd_config
 
