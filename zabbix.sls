@@ -8,13 +8,14 @@ zabbix-agent:
   pkg:
     - installed
     - name: zabbix-agent
-  service: 
-    - running
+  service.running: 
+    - enable: true
     - watch:
       - file: /etc/zabbix/zabbix_agentd.conf
 
 {% set definedRole = salt['grains.filter_by']({
-    'monitor': {'src': 'zabbix_agentd.conf' },
+    'monitor.eotn.calnek.com': {'src': 'zabbix_agentd-monitor.conf' },
+    'monitor.com': {'src': 'zabbix_agentd-monitor.conf' },
     'empty': {'src': 'zabbix_agentd.conf' },
   }, 
     default='empty',
