@@ -1,7 +1,7 @@
 {% set definedOS = salt['grains.filter_by']({
-    'empty': {'pkgname': 'squid', 'svcname': 'squidd' },
+    'default': {'pkgname': 'squid', 'svcname': 'squid' },
   }, 
-    default='empty',
+    default='default',
     grain='os'
   ) 
 %}
@@ -17,9 +17,9 @@ squid:
       - file: /etc/squid/squid.conf
 
 {% set definedHost = salt['grains.filter_by']({
-    'empty': {'src': 'squid.conf' },
+    'default': {'src': 'squid.conf' },
   }, 
-    default='empty',
+    default='default',
     grain='localhost'
   ) 
 %}
