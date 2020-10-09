@@ -19,5 +19,12 @@
     - group: root
     - mode: 600
 
+/etc/selinux/config:
+  file.managed:
+    - source: salt://managedFiles/selinux
+    - user: root
+    - group: root
+    - mode: 600
+
 
 
