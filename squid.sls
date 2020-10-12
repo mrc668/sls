@@ -45,3 +45,17 @@ squid:
     - group: root
     - mode: 644
 
+/etc/logrotate.d/squid:
+  file.managed:
+    - source: salt://managedFiles/squid/logrotate.conf
+    - user: root
+    - group: root
+    - mode: 644
+
+
+/usr/bin/chmod a+r /var/log/squid/access.log:
+  cmd.run
+
+/usr/bin/chmod a+r /var/log/squid/cache.log:
+  cmd.run
+
