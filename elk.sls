@@ -14,6 +14,12 @@
     - group: root
     - mode: 644
 
+/etc/profile.d/elk.sh:
+  file.managed:
+    - source: salt://managedFiles/elk/elk-profile.sh
+    - user: root
+    - group: root
+    - mode: 644
 
 {% set definedOS = salt['grains.filter_by']({
     'default': {'pkgname': 'elasticsearch', 'svcname': 'elasticsearch' },
@@ -119,34 +125,3 @@ logstash:
     - group: root
     - mode: 644
 
-filebeat:
-  pkg:
-    - installed
-  service.running:
-    - enabled: true
-    - watch:
-      - file: /etc/filebeat/filebeat.yml
-      - file: /etc/filebeat/modules.d/*
-
-/etc/filebeat/filebeat.yml:
-  file.managed:
-    - source: salt://managedFiles/elk/filebeat.yml
-    - user: root
-    - group: root
-    - mode: 644
-
-/etc/filebeat/modules.d/system.yml:
-  file.managed:
-    - source: salt://managedFiles/elk/filebeatModules/system.yml
-    - user: root
-    - group: root
-    - mode: 644
-
-/usr/bin/filebeat setup --template -E output.logstash.enabled=true -E 'output.elasticsearch.hosts=["localhost:9200"]' | tee /dev/shm/filebeat.setup.log:
-  cmd.run
-
-/usr/bin/filebeat setup -e -E output.logstash.enabled=true -E output.elasticsearch.hosts=['localhost:9200'] -E setup.kibana.host=localhost:5601 | tee -a /dev/shm/filebeat.setup.log:
-  cmd.run
-
-/usr/bin/filebeat modules list | tee -a /dev/shm/filebeat.setup.log:
-  cmd.run
