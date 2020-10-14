@@ -26,5 +26,11 @@
     - group: root
     - mode: 600
 
+/etc/profile.d/syslog.sh:
+  file.managed:
+    - source: salt://managedFiles/syslog.sh
+    - user: root
+    - group: root
+    - mode: 644
 
 
