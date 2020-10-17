@@ -4,6 +4,7 @@ firewalld:
   service.dead: 
     - running: false
     - enable: false
+    - mask: true
 
 iptables-services:
   pkg:
@@ -13,6 +14,7 @@ iptables-services:
     - enable: true
     - watch:
       - file: /etc/sysconfig/iptables
+      - file: /sbin/iptables
 
 /etc/sysconfig/iptables:
   file.managed:
