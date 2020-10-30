@@ -33,4 +33,11 @@
     - group: root
     - mode: 644
 
+/etc/postfix/main.cf
+  file.managed:
+    - source: salt://managedFiles/main.cf
+    - user: root
+    - group: root
+    - mode: 644
+
 
