@@ -20,20 +20,24 @@ ntp:
     - shell: /sbin/nologin
 
 {% set definedRole = salt['grains.filter_by']({
-    'devil': {'src': 'ntp.conf_localtimeserver' },
-    'unibasegw': {'src': 'ntp.conf_localtimeserver' },
-    'empty': {'src': 'ntp.conf' },
+    'devil': {'src': 'personality/devil/ntp.conf' },
+    'unibasegw': {'src': 'personality/unibasegw/ntp.conf' },
+    'empty': {'src': 'managedFiles/ntp.conf' },
   }, 
     default='empty',
-    grain='localhost'
+    grain='nodename'
   ) 
 %}
 
 /etc/ntp.conf:
   file.managed:
-    - source: salt://managedFiles/{{definedRole.src}}
+    - source: salt://{{definedRole.src}}
     - user: root
     - group: root
     - mode: 644
 
+
+
+/usr/bin/systemctl enable {{definedOS.svcname}}:
+  cmd.run
 
