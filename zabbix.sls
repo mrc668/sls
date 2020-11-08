@@ -14,12 +14,11 @@ zabbix-agent:
       - file: /etc/zabbix/zabbix_agentd.conf
 
 {% set definedRole = salt['grains.filter_by']({
-    'monitor.eotn.calnek.com': {'src': 'zabbix_agentd-monitor.conf' },
-    'monitor.com': {'src': 'zabbix_agentd-monitor.conf' },
-    'empty': {'src': 'zabbix_agentd.conf' },
+    'monitor': {'src': 'personality/monitor/zabbix_agentd.conf' },
+    'empty': {'src': 'managedFiles/zabbix_agentd.conf' },
   }, 
     default='empty',
-    grain='localhost'
+    grain='nodename'
   ) 
 %}
 
