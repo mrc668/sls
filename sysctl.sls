@@ -6,14 +6,19 @@
     - group: root
     - mode: 644
 
+{% set definedVer = salt['grains.filter_by']({
+    'devil': {'ver': '1' },
+    'unibasegw': {'ver': '1' },
+    'empty': {'ver': '0' },
+  }, 
+    default='empty',
+    grain='nodename'
+  ) 
+%}
+
 /etc/sysctl.d/forward.conf:
   file.managed:
-    {% if grains['localhost'] == 'devil' 
-    or grains['localhost'] == 'unibasegw'  %}
-    - source: salt://managedFiles/sysctl/forward.conf1
-    {% else %}
-    - source: salt://managedFiles/sysctl/forward.conf0
-    {% endif %}
+    - source: salt://managedFiles/sysctl/forward.conf{{definedVer.ver}}
     - user: root
     - group: root
     - mode: 644

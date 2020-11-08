@@ -23,7 +23,7 @@ ssh:
     'empty': {'src': 'sshd_config' },
   }, 
     default='empty',
-    grain='localhost'
+    grain='nodename'
   ) 
 %}
 
