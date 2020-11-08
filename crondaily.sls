@@ -1,9 +1,24 @@
-/etc/cron.d/1daily:
+cronie-anacron:
+  pkg.removed
+
+cronie-noanacron:
+  pkg.installed
+
+/etc/cron.d/dailyjobs:
   file.managed:
-    - source: salt://managedFiles/cron.daily
+    - source: salt://managedFiles/cron.run.parts
     - user: root
     - group: root
     - mode: 644
+
+/etc/cron.d/run.parts:
+  file.absent
+
+/etc/cron.d/0hourly:
+  file.absent
+
+/etc/cron.d/1daily:
+  file.absent
 
 /etc/anacrontab:
   file.managed:
