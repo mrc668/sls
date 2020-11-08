@@ -1,11 +1,3 @@
-firewalld:
-  pkg:
-    - installed
-  service.dead: 
-    - running: false
-    - enable: false
-    - mask: true
-
 iptables-services:
   pkg:
     - installed
@@ -14,22 +6,12 @@ iptables-services:
     - enable: true
     - watch:
       - file: /etc/sysconfig/iptables
-      - file: /sbin/iptables
 
-/etc/sysconfig/iptables:
+/usr/local/sbin/sbinIPTables:
   file.managed:
-    - source: 
-      - salt://personality/{{ grains['nodename'] }}/iptables
-      - salt://managedFiles/iptables.open
+    - source: salt://managedFiles/sbinIPTables
     - user: root
     - group: root
-    - mode: 600
-
-/sbin/iptables:
-  file.symlink:
-    - target: /sbin/xtables-multi
-
-/usr/sbin/iptables:
-  file.symlink:
-    - target: /usr/sbin/xtables-multi
-
+    - mode: 755
+  cmd.run:
+    - cwd: /
