@@ -1,3 +1,4 @@
+#  https://repo.saltstack.com/py3/redhat/salt-py3-repo-3001.el7.noarch.rpm
 {% set definedOS = salt['grains.filter_by']({
     'empty': {'pkgname': 'salt-minion', 'svcname': 'salt-minion' },
   }, 

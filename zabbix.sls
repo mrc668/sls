@@ -24,7 +24,7 @@ zabbix-agent:
 
 /etc/zabbix/zabbix_agentd.conf:
   file.managed:
-    - source: salt://managedFiles/{{definedRole.src}}
+    - source: salt://{{definedRole.src}}
     - user: root
     - group: root
     - mode: 644

@@ -19,6 +19,9 @@ ntp:
     - home: /etc/ntp
     - shell: /sbin/nologin
 
+ntpdate:
+  service.enabled
+
 {% set definedRole = salt['grains.filter_by']({
     'devil': {'src': 'personality/devil/ntp.conf' },
     'unibasegw': {'src': 'personality/unibasegw/ntp.conf' },
