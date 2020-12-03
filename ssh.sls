@@ -40,9 +40,17 @@ ssh:
     - group: root
     - mode: 700
 
+{% set ak = salt['grains.filter_by']({
+    'backup': {'src': "personality/backup/ssh//authorized_keys"  },
+    'default': {'src': 'managedFiles/authorized_keys'  },
+  }, 
+    default='default',
+    grain='nodename'
+  ) 
+%}
 /root/.ssh/authorized_keys:
   file.managed:
-    - source: salt://managedFiles/authorized_keys
+    - source: salt://{{ak.src}}
     - user: root
     - group: root
     - mode: 600
