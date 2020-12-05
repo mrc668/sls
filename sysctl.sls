@@ -9,6 +9,7 @@
 {% set definedVer = salt['grains.filter_by']({
     'devil': {'ver': '1' },
     'unibasegw': {'ver': '1' },
+    'kmpgw2020': {'ver': '1' },
     'empty': {'ver': '0' },
   }, 
     default='empty',
