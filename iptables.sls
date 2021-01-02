@@ -1,3 +1,10 @@
+/etc/sysconfig/iptables:
+  file.managed:
+    - source: salt://personality/{{ grains['nodename']}}/iptables
+    - user: root
+    - group: root
+    - mode: 600
+
 iptables-services:
   pkg:
     - installed
