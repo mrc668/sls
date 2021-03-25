@@ -1,0 +1,15 @@
+[Unit]
+Description=Network Time Service
+After=syslog.target network-online.target
+Before=time-sync.target
+Wants=time-sync.target network-online.target
+
+[Service]
+Type=forking
+EnvironmentFile=-/etc/sysconfig/ntpd
+ExecStartPre=/usr/libexec/ntpdate-wrapper
+ExecStart=/usr/sbin/ntpd -u ntp:ntp $OPTIONS
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
