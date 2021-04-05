@@ -1,0 +1,13 @@
+# source: salt://pillars/selfCheck/selfCheck.service
+[Unit]
+Description=self check is a script that checks the local server
+After=syslog.target network.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/local/sbin/selfCheck.sh --daemon
+
+[Install]
+WantedBy=basic.target
+
