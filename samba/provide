@@ -1,0 +1,24 @@
+#!/bin/bash
+# source: salt://sls/samba/provide
+
+ProvidePoint="$*"
+ProvideDir=$(echo $ProvidePoint | sed -e "s|/|_._|g; s/^_._//; s/_._$//;")
+logger -p daemon.info -t provide $ProvidePoint started
+
+[ -d "$ProvidePoint" ] || exit -1
+
+grep "^encfs.*$ProvideDir.fuse" /proc/mounts -q && exit -2
+
+mkdir -p /mnt/crypt/"$ProvideDir"
+[ -f "$ProvidePoint"/.encfs6.xml ] || cp /root/.encfs6.xml "$ProvidePoint"
+[ -f "$ProvidePoint"/.encfs6.xml ] || exit -4
+
+grep /mnt/crypt/"$ProvideDir".fuse /proc/mounts -q && exit
+
+cat /root/.key | encfs -S --idle=15 --reverse -o ro "$ProvidePoint"  /mnt/crypt/"$ProvideDir"
+
+GrepableProvidePoint=$(echo "$ProvideDir" | tr "\$" "." | sed -e "s/ .*$//")
+grep ^encfs.*$GrepableProvidePoint /proc/mounts -q || exit -3
+logger -p daemon.info -t provide $ProvidePoint completed
+
+

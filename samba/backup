@@ -1,0 +1,63 @@
+#!/bin/bash
+
+cp /dev/null /dev/shm/backup.log
+LOGGER="logger -ip daemon.info -t backup.local"
+
+$LOGGER Backup started.
+DATE=`date +%F`
+DATEPATH=`date +%F | sed -e "s|-|/|g"`
+MOUNT_POINT=/mnt/backup
+
+#. /home/backup/vars
+source /etc/sysconfig/backup
+
+
+grep $MOUNT_POINT /proc/mounts -q || mount $MOUNT_POINT
+grep $MOUNT_POINT /proc/mounts -q || {
+        /usr/local/sbin/send_nsca_backup_complete 2 "Failed to mount /mnt/backup."
+        exit -1
+}
+
+/usr/local/sbin/send_nsca_check_disk
+
+
+[ -d /mnt/backup/dumps ] || mkdir /mnt/backup/dumps
+
+[ "$MYSQL" ] && {
+  UserSQL="select concat('\'',user,'\'@\'',host,'\'') from mysql.user where user != 'root' and user != ''"
+  mysql -BNe "$UserSQL" | while read uh; do 
+    mysql -BNe "show grants for $uh" | sed 's/$/;/; s/\\\\/\\/g' 
+  done > $MOUNT_POINT/dumps/mysql.sql
+}
+
+for db in $MYSQL; do 
+	mysqldump $db > $MOUNT_POINT/dumps/${db}.sql; 
+done
+
+RSyncOptions="-avR --stats --delete --delete-delay --backup  --log-file=/dev/shm/backup.log"
+for i in $BACKUP_DIRS; do
+	$LOGGER "Backing up $i"
+	DIR=$( dirname $i )
+	[ -d $MOUNT_POINT/Current/$DIR ] || mkdir -p $MOUNT_POINT/Current/$DIR
+	[ -d $MOUNT_POINT/Changed_And_Deleted_Files/$DATEPATH/$DIR ] || mkdir -p $MOUNT_POINT/Changed_And_Deleted_Files/$DATEPATH/$DIR
+	BASE=$( basename $i )
+	FULL=$( echo $i | sed -e "s|/|_|g" )
+
+ 	EXCLUDES=""
+	DashName=$(echo $i | sed -e"s|/|-|g")
+	echo looking for /etc/sysconfig/backup-excludes$DashName
+	[ -f /etc/sysconfig/backup-excludes$DashName ] && EXCLUDES="--exclude-from=/etc/sysconfig/backup-excludes$DashName"
+
+	echo EXCLUDES=$EXCLUDES | $LOGGER
+	echo rsync $RSyncOptions  --backup-dir=$MOUNT_POINT/Changed_And_Deleted_Files/$DATEPATH/$DIR $EXCLUDES $i $MOUNT_POINT/Current | $LOGGER
+	rsync $RSyncOptions  --backup-dir=$MOUNT_POINT/Changed_And_Deleted_Files/$DATEPATH/$DIR $EXCLUDES $i $MOUNT_POINT/Current | $LOGGER
+done
+
+find /mnt/backup/Changed_And_Deleted_Files -type f -exec basename {} \; | /usr/local/sbin/fileNameCount.pl | sort -nr | head -20 | $LOGGER
+
+# Clean up.
+umount /mnt/backup
+$LOGGER Backup complete
+/usr/local/sbin/send_nsca_backup_complete 0 "Backup complete."
+
+
