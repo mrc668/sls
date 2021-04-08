@@ -1,14 +1,14 @@
 
 /usr/local/sbin/selfCheck.sh:
   file.managed:
-    - source: salt://pillars/selfCheck/selfCheck.sh.{{grains['nodename']}}
+    - source: salt://personality/{{grains['nodename']}}//selfCheck.sh
     - user: root
     - group: root
     - mode: 755
 
 /etc/systemd/system/selfCheck.service:
   file.managed:
-    - source: salt://pillars/selfCheck/selfCheck.service
+    - source: salt://sls/selfCheck/selfCheck.service
     - user: root
     - group: root
     - mode: 644
@@ -19,7 +19,7 @@
 
 /usr/local/mp3:
   file.recurse:
-    - source: salt://pillars/selfCheck/mp3
+    - source: salt://sls/selfCheck/mp3
     - user: root
     - group: root
     - dir_more: 755
