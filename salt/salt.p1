@@ -1,0 +1,9 @@
+--- /usr/lib/python3.6/site-packages/salt/grains/core.py	2021-04-11 13:04:07.081030390 -0600
+@@ -1552,6 +1548,7 @@
+     "Korora": "RedHat",
+     "FedBerry": "RedHat",
+     "CentOS": "RedHat",
++    "Springdale Open Enterprise": "RedHat",
+     "GoOSe": "RedHat",
+     "Scientific": "RedHat",
+     "Amazon": "RedHat",
