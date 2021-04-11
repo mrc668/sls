@@ -17,6 +17,12 @@ ntpdate:
     - name: ntpdate
     - enable: false
 
+chronyd:
+  service.disabled: 
+    - name: chronyd
+    - enable: false
+    - running: false
+
 {% set definedRole = salt['grains.filter_by']({
     'devil': {'src': 'personality/devil/ntp.conf' },
     'unibasegw': {'src': 'personality/unibasegw/ntp.conf' },
