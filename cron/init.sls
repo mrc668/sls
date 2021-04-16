@@ -1,0 +1,2 @@
+include:
+ - sls/cron/daily 

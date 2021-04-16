@@ -2,7 +2,11 @@ cronie-anacron:
   pkg.removed
 
 cronie-noanacron:
-  pkg.installed
+  pkg:
+    - installed
+  service.running: 
+    - name: crond
+    - enable: true
 
 /etc/cron.d/dailyjobs:
   file.managed:
