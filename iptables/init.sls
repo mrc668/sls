@@ -14,11 +14,22 @@ iptables-services:
     - watch:
       - file: /etc/sysconfig/iptables
 
+# Ensure that /sbin/iptables exists
 /usr/local/sbin/sbinIPTables:
   file.managed:
-    - source: salt://managedFiles/sbinIPTables
+    - source: salt://sls/iptables/sbinIPTables
     - user: root
     - group: root
     - mode: 755
   cmd.run:
     - cwd: /
+
+/usr/local/sbin/networkManager:
+  file.managed:
+    - source: salt://sls/iptables/networkManager
+    - user: root
+    - group: root
+    - mode: 755
+  cmd.run:
+    - cwd: /
+

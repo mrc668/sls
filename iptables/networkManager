@@ -1,0 +1,11 @@
+#!/bin/bash
+
+/usr/bin/systemctl list-units | grep NetworkManager -q && {
+  /usr/bin/systemctl stop NetworkManager
+  /usr/bin/systemctl disable NetworkManager
+  /usr/bin/systemctl mask NetworkManager
+  /usr/bin/chmod a-x /usr/sbin/NetworkManager
+  touch /dev/shm/disableNM
+}
+exit 0
+

@@ -1,0 +1,23 @@
+#!/bin/bash
+# source: salt://managedFiles/sbinIPTables
+
+# /sbin/iptables is necessary for iptables.service to operate properly.
+# /usr/sbin/iptables should exist as well... not sure where it's called... 
+
+stat -c %F /sbin/iptables >/dev/null 2>&1 || {
+  cd /sbin
+  ln -s ../usr/sbin/iptables .
+}
+
+stat -c %F /usr/sbin/iptables >/dev/null 2>&1 || {
+  cd /usr/sbin
+  ln -s xtables-multi iptables 
+}
+
+
+/usr/bin/systemctl status firewalld | grep inactive -q || { 
+  /usr/bin/systemctl stop firewalld
+  /usr/bin/systemctl disable firewalld
+  /usr/bin/systemctl mask firewalld
+}
+
