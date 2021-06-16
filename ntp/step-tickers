@@ -1,0 +1,5 @@
+# source salt://sls/ntp/step-tickers
+# List of NTP servers used by the ntpdate service.
+
+10.0.10.2
+
