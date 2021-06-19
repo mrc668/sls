@@ -27,6 +27,7 @@ chronyd:
     'devil': {'src': 'personality/devil/ntp.conf' },
     'unibasegw': {'src': 'personality/unibasegw/ntp.conf' },
     'kmpgw2020': {'src': 'personality/kmpgw2020/ntp.conf' },
+    'gpagw2106': {'src': 'personality/gpagw2106/ntp.conf' },
     'empty': {'src': 'sls/ntp/ntp.conf' },
   }, 
     default='empty',
@@ -50,7 +51,7 @@ chronyd:
 
 /etc/ntp/step-tickers:
   file.managed:
-    - source: salt://sls/ntp/step-tickers
+    - source: salt://personality/{{ grains['nodename']}}/step-tickers
     - user: root
     - group: root
     - mode: 644
