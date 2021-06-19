@@ -16,8 +16,9 @@
 sshd:
   pkg:
     - installed
-  service.running: 
     - name: {{definedOS.pkgname}}
+  service.running: 
+    - name: {{definedOS.svcname}}
     - enable: true
     - watch:
       - file: /etc/ssh/sshd_config
