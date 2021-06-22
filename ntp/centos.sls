@@ -56,8 +56,12 @@ chronyd:
     - group: root
     - mode: 644
 
-/usr/bin/systemctl enable ntpd:
-  cmd.run
+/usr/local/sbin/ntpScripts.sh:
+  file.managed:
+    - source: salt://sls/ntp/ntpScripts.sh
+    - user: root
+    - group: root
+    - mode: 755
+  cmd.run:
+    - cwd: /
 
-systemctl disable chronyd:
-  cmd.run
