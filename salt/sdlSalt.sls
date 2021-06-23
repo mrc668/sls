@@ -17,3 +17,5 @@
   cmd.run:
     - cwd: /
 
+include:
+  - sls/salt/restart-minion
