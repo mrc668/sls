@@ -35,11 +35,17 @@ selfCheck.dependancies:
       - nagios-plugins-smtp
       - nagios-plugins-tcp
       - nagios-plugins-mysql
+      - nagios-plugins-http
       - mpg123
-      - alsa-tools
+      #- alsa-tools
       - alsa-utils
+      - ethtool
+      - speedtest-cli
 
 # Maybe run this one by hand
 #/sbin/alsactl init:
 #  cmd.run
  
+/usr/local/sbin/speedtest-cli:
+  file.absent
+
