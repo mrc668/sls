@@ -9,6 +9,7 @@ Type=forking
 EnvironmentFile=-/etc/sysconfig/ntpd
 ExecStartPre=/usr/libexec/ntpdate-wrapper
 ExecStart=/usr/sbin/ntpd -u ntp:ntp $OPTIONS
+Restart=always
 PrivateTmp=true
 
 [Install]
