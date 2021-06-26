@@ -1,0 +1,6 @@
+# Source salt://pillars/zabbix/sudoer
+
+Defaults:zabbix !requiretty
+Defaults  lecture="never"
+zabbix	ALL = NOPASSWD: /usr/local/sbin/zg_salt,/usr/local/sbin/zg_md5,/usr/local/sbin/check-vpn-doit
+

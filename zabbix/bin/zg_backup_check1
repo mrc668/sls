@@ -1,0 +1,9 @@
+#!/bin/bash
+# source: salt://sls/zabbix/bin/zg_backup_check1
+
+[ -f /data/ZCS-8.8.8/zimbra/log/access_log.$(date -d yesterday +%F) ] || { echo 1; exit 1; }
+
+echo 0
+exit
+
+

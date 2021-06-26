@@ -1,0 +1,11 @@
+#!/bin/bash
+# source: salt://sls/zabbix/bin/zg_goget_check1
+
+DatePath=$(date +%F | tr "-" "/")
+[ -d /data/kmp.vpn/Changed_And_Deleted_Files/$DatePath ] || { echo 1; exit 1; }
+
+
+echo 0
+exit
+
+

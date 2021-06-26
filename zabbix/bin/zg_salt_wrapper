@@ -1,0 +1,4 @@
+#!/bin/bash
+# source salt://pillars/zabbix/zg_salt_wrapper
+
+sudo /usr/local/sbin/zg_salt

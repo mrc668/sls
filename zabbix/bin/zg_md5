@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# source:  salt://sls/zabbix/bin/zg_md5
+
+fileList="
+  /etc/sudoers
+  /root/.ssh/authorized_keys
+"
+
+for i in $fileList; do md5sum $i; done
+
+

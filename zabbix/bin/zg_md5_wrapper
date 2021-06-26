@@ -1,0 +1,4 @@
+#!/bin/bash
+# source salt://pillars/zabbix/zg_md5_wrapper
+
+sudo /usr/local/sbin/zg_md5
