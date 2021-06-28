@@ -1,0 +1,16 @@
+# src: salt://salt/managedFiles/logrotate-salt
+/var/log/salt/master {
+  missingok
+  notifempty
+}
+
+/var/log/salt/minion {
+  missingok
+  notifempty
+}
+
+/var/log/salt/key {
+  missingok
+  notifempty
+}
+
