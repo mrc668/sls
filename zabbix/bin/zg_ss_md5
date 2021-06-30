@@ -1,5 +1,0 @@
-#!/bin/bash
-# source salt://sls/zabbix/bin/zg_ss_md5
-
-ss -ntulH | tr -s " " | cut -d" " -f1,4- | md5sum
-
