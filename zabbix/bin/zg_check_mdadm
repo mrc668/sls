@@ -1,0 +1,19 @@
+#!/bin/bash
+# source salt://sls/zabbix/bin/zg_check_mdadm
+
+function report {
+        ev=$1
+        echo $ev
+        rm -f $Detail
+        exit $ev
+}
+
+Detail=$(mktemp /dev/shm/detailXXXXXX)
+for i in $(grep ^md /proc/mdstat | cut -d: -f1); do echo /dev/$i $(mdadm --detail /dev/$i | grep State.:); done > $Detail
+grep -Ev "active|clean" $Detail -q && {
+        cat $Detail | logger -p daemon.info -t zg_mdadm
+        for j in $(grep -Ev "active|clean" $Detail | cut -d" " -f1); do mdadm --detail $j; done | logger -p daemon.info -t zg_mdadm
+        report 1
+}
+grep -E "clean|active" $Detail -q && report 0
+report 255

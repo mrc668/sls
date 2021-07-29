@@ -1,0 +1,4 @@
+#!/bin/bash
+# source salt://sls/zabbix/bin/zg_check_mdadm_wrapper
+
+sudo /usr/local/sbin/zg_check_mdadm
