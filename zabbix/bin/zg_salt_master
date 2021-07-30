@@ -1,0 +1,5 @@
+#!/bin/bash
+# source salt://sls/zabbix/bin/zg_salt_master
+
+pgrep -u salt | wc -l
+

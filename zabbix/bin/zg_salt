@@ -3,9 +3,10 @@
 
 /usr/bin/systemctl status salt-minion | grep active..running -q || { echo 1; exit 1; }
 
-#/usr/bin/salt-call test.ping | grep True -q || { echo 2; exit 2; }
+/usr/bin/salt-call test.ping | grep True -q || { echo 2; exit 2; }
 grep "Data failed to compile" /var/log/salt-call* -q && { echo 3; exit 3; }
 grep "Result: False"  /var/log/salt-call* -q && { echo 4; exit 4; }
+[ -s /var/log/salt-call ] || { echo 5; exit 5; }
 
 echo 0; exit
 
