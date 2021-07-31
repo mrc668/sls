@@ -1,0 +1,21 @@
+# source: salt://sls/ipset/ipset.service
+[Unit]
+Description=load ipsets listed in /etc/sysconfig/ipsets
+Before=network-pre.target
+Before=iptables.service
+Wants=network-pre.target
+After=syslog.target
+AssertPathExists=/etc/sysconfig/ipsets
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/ipset.load
+RemainAfterExit=yes
+Environment=BOOTUP=serial
+Environment=CONSOLETYPE=serial
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=basic.target
+
