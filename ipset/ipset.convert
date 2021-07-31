@@ -1,0 +1,16 @@
+#!/bin/bash
+# source salt://sls/ipset/ipset.convert
+
+LOGGER="/usr/bin/logger -p daemon.info -t $0"
+$LOGGER called with $*
+PATH="/sbin:$PATH"
+
+sets="$*"
+[ "$sets" ] || sets=$( ipset list | grep ^Name: | cut -d: -f2 )
+
+for s in $sets; do
+  $LOGGER saving set $s
+  /sbin/ipset save $s > /etc/sysconfig/ipsets/$s  2>/dev/null
+done
+
+

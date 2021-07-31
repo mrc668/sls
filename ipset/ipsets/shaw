@@ -1,4 +1,5 @@
-64.59.128.0/18
-24.244.0.0/18
-24.108.0.0/15
+create shaw hash:net family inet hashsize 1024 maxelem 65536
+add shaw 64.59.128.0/18
+add shaw 24.244.0.0/18
+add shaw 24.108.0.0/15
 

@@ -1,1 +1,2 @@
-23.192.0.0/11
+create akamai hash:net family inet hashsize 1024 maxelem 65536
+add akamai 23.192.0.0/11

@@ -1,2 +1,3 @@
-17.0.0.0/8
+create apple hash:net family inet hashsize 1024 maxelem 65536
+add apple 17.0.0.0/8
 

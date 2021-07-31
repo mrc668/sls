@@ -1,4 +1,5 @@
 #!/bin/bash
+# source salt://sls/ipset/ipset.load
 
 LOGGER="/usr/bin/logger -p daemon.info -t $0"
 $LOGGER called with $*
@@ -7,12 +8,8 @@ sets="$*"
 [ "$sets" ] || sets=$( ls /etc/sysconfig/ipsets )
 
 for s in $sets; do
-  $LOGGER creating $s
-  /sbin/ipset create $s hash:net 2>/dev/null
-  /sbin/ipset flush $s
-  cat /etc/sysconfig/ipsets/$s | while read ip comment; do 
-    /sbin/ipset add $s $ip
-  done
+  $LOGGER loading set $s
+  /sbin/ipset restore -f /etc/sysconfig/ipsets/$s  2>/dev/null
 done
 
 

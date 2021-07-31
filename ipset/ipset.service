@@ -10,6 +10,7 @@ AssertPathExists=/etc/sysconfig/ipsets
 [Service]
 Type=oneshot
 ExecStart=/usr/local/sbin/ipset.load
+ExecStop=/usr/local/sbin/ipset.convert
 RemainAfterExit=yes
 Environment=BOOTUP=serial
 Environment=CONSOLETYPE=serial
