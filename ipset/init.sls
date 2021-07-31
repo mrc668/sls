@@ -4,6 +4,13 @@ ipset.dependancies:
     - pkgs:
       - ipset
 
+/usr/local/sbin/ipset.convert:
+  file.managed:
+    - source: salt://sls/ipset/ipset.convert
+    - user: root
+    - group: root
+    - mode: 755
+
 /usr/local/sbin/ipset.load:
   file.managed:
     - source: salt://sls/ipset/ipset.load
