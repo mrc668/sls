@@ -1,0 +1,19 @@
+#!/bin/bash
+# source salt://pillars/perimiter/updateSpamhaus
+
+cd /dev/shm
+
+DT=$(/usr/bin/date +%F)
+wget www.spamhaus.org/drop/drop.lasso
+
+grep -q SBL drop.lasso || exit
+
+/usr/sbin/ipset list spamhaus > /dev/null 2>&1 || /usr/sbin/ipset create spamhaus hash:net
+/usr/sbin/ipset flush  spamhaus
+cp /dev/null /etc/sysconfig/ipsets/spamhaus
+
+for i in $( grep SBL drop.lasso | cut -d\; -f1); do 
+	/usr/sbin/ipset add spamhaus $i
+  echo $i >> /etc/sysconfig/ipsets/spamhaus
+done
+

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# source salt://pillars/perimiter/viewBlackLists
+
+LogFiles="/var/log/messages-$(date -d yesterday +%Y%m%d) /var/log/messages"
+echo Looking in $LogFiles
+
+echo ISC Top 20
+grep raw.ISCDrop $LogFiles | grep -v HIST | sed -e "s/^.*SRC=//; s/ DST.*$//;" | sort -n | uniq -c | sort -n | tail -n 20
+
+echo spamhaus
+grep raw.spamhausDrop $LogFiles | grep -v HIST | sed -e "s/^.*SRC=//; s/ DST.*$//;" | sort -n | uniq -c | sort -n | tail -n 20
+

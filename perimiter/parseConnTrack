@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+# /usr/local/sbin/parseConnTrack
+
+
+# take a snapshot of /proc/net/nf_conntrack.
+#ipv4     2 tcp      6 119 TIME_WAIT src=10.0.10.25 dst=24.72.12.92 sport=53865 dport=443 src=24.72.12.92 dst=10.0.10.25 sport=443 dport=53865 [ASSURED] mark=0 zone=0 use=2
+#ipv4     2 tcp      6 93 TIME_WAIT src=10.0.10.3 dst=10.0.10.2 sport=56746 dport=10050 src=10.0.10.2 dst=10.0.10.3 sport=10050 dport=56746 [ASSURED] mark=0 zone=0 use=2
+#ipv4     2 udp      17 24 src=10.0.10.3 dst=10.0.10.2 sport=49861 dport=53 src=10.0.10.2 dst=10.0.10.3 sport=53 dport=49861 [ASSURED] mark=0 zone=0 use=2
+#ipv4     2 udp      17 17 src=24.72.12.92 dst=192.55.83.30 sport=42433 dport=53 src=192.55.83.30 dst=24.72.12.92 sport=53 dport=42433 mark=0 zone=0 use=2
+#ipv4     2 tcp      6 111 TIME_WAIT src=10.0.10.3 dst=1.0.0.34 sport=60394 dport=10050 src=1.0.0.34 dst=10.0.10.3 sport=10050 dport=60394 [ASSURED] mark=0 zone=0 use=2
+#ipv4     2 tcp      6 8 TIME_WAIT src=10.0.10.2 dst=10.0.10.3 sport=58900 dport=80 src=10.0.10.3 dst=10.0.10.2 sport=80 dport=58900 [ASSURED] mark=0 zone=0 use=2
+#ipv4     2 tcp      6 100 TIME_WAIT src=10.0.10.3 dst=1.0.1.4 sport=58540 dport=10050 src=1.0.1.4 dst=10.0.10.3 sport=10050 dport=58540 [ASSURED] mark=0 zone=0 use=2
+#ipv4     2 tcp      6 23 TIME_WAIT src=10.0.10.2 dst=10.0.10.5 sport=35624 dport=80 src=10.0.10.5 dst=10.0.10.2 sport=80 dport=35624 [ASSURED] mark=0 zone=0 use=2
+#ipv4     2 tcp      6 87 TIME_WAIT src=10.0.10.3 dst=1.0.0.30 sport=59266 dport=10050 src=1.0.0.30 dst=10.0.10.3 sport=10050 dport=59266 [ASSURED] mark=0 zone=0 use=2
+#ipv4     2 tcp      6 19 TIME_WAIT src=10.0.10.25 dst=24.72.12.92 sport=53757 dport=443 src=24.72.12.92 dst=10.0.10.25 sport=443 dport=53757 [ASSURED] mark=0 zone=0 use=2
+
+while(<>) {
+  m/src=([\d\.]{7,15}) dst=([\d\.]{7,15}).*src=([\d\.]{7,15}) dst=([\d\.]{7,15})/;
+  #print "$_";
+  $d=$2;
+  print "$d\n";
+}
+

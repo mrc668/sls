@@ -1,0 +1,34 @@
+#!/bin/bash
+# source salt://pillars/perimiter/updateISCblocks
+
+curl -Ss https://isc.sans.edu/block.txt | grep ^[1-9] | cut -f1 > /dev/shm/isc-blocks
+
+# let a cleaning process take care of cleaning
+# /usr/sbin/iptables -t raw -F BlackList
+
+ActiveIPList=$(mktemp /dev/shm/XXXXXXXX)
+NF_Conntrack=$(mktemp /dev/shm/XXXXXXXX)
+cat /proc/net/nf_conntrack > $NF_Conntrack
+
+/usr/sbin/ipset list | grep ^Name:.isc-blocks -q || /usr/sbin/ipset create isc-blocks hash:net
+/usr/sbin/iptables -t raw -nL | grep BlackList -q || /usr/sbin/iptables -t raw -N BlackList
+cp /dev/null /etc/sysconfig/ipsets/isc-blocks
+
+DT=$(/usr/bin/date +%F-%H%M)
+for i in $(cat /dev/shm/isc-blocks); do 
+	if ! /usr/sbin/ipset --quiet test isc-blocks $i ; then
+    /usr/sbin/ipset add isc-blocks $i/24
+    echo $i/24 >> /etc/sysconfig/ipsets/isc-blocks
+	fi
+done
+
+/usr/local/sbin/parseConnTrack < $NF_Conntrack | sort -n | uniq > $ActiveIPList
+for i in $(cat $ActiveIPList); do
+  /usr/sbin/ipset --quiet test isc-blocks $i && {
+    logger  -p daemon.info -t updateBlackList Detected activity to ISC block
+    grep $i $NF_Conntrack | logger -p daemon.info -t updateBlackList
+  }
+done
+
+rm -f $ActiveIPList $NF_Conntrack
+
