@@ -6,7 +6,7 @@
 
 /etc/cron.d/ids:
   file.managed:
-    - source: salt://pillars/perimiter/cron
+    - source: salt://sls/perimiter/cron
     - user: root
     - group: root
     - mode: 644
@@ -25,28 +25,28 @@ perimeter.dependancies:
 
 /usr/local/sbin/updateISCblocks:
   file.managed:
-    - source: salt://pillars/perimiter/updateISCblocks
+    - source: salt://sls/perimiter/updateISCblocks
     - user: root
     - group: root
     - mode: 755
 
 /usr/local/sbin/parseConnTrack:
   file.managed:
-    - source: salt://pillars/perimiter/parseConnTrack
+    - source: salt://sls/perimiter/parseConnTrack
     - user: root
     - group: root
     - mode: 755
 
 /usr/local/sbin/viewBlackLists:
   file.managed:
-    - source: salt://pillars/perimiter/viewBlackLists
+    - source: salt://sls/perimiter/viewBlackLists
     - user: root
     - group: root
     - mode: 755
 
 /usr/local/sbin/updateSpamhaus:
   file.managed:
-    - source: salt://pillars/perimiter/updateSpamhaus
+    - source: salt://sls/perimiter/updateSpamhaus
     - user: root
     - group: root
     - mode: 755
