@@ -23,31 +23,11 @@ perimeter.dependancies:
 /usr/local/sbin/clearBlackList:
   file.absent
 
-/usr/local/sbin/updateISCblocks:
-  file.managed:
-    - source: salt://sls/perimiter/updateISCblocks
+uls_perimeter:
+  file.recurse:
+    - source: salt://sls/perimeter/bin
+    - name: /usr/local/sbin
     - user: root
     - group: root
-    - mode: 755
-
-/usr/local/sbin/parseConnTrack:
-  file.managed:
-    - source: salt://sls/perimiter/parseConnTrack
-    - user: root
-    - group: root
-    - mode: 755
-
-/usr/local/sbin/viewBlackLists:
-  file.managed:
-    - source: salt://sls/perimiter/viewBlackLists
-    - user: root
-    - group: root
-    - mode: 755
-
-/usr/local/sbin/updateSpamhaus:
-  file.managed:
-    - source: salt://sls/perimiter/updateSpamhaus
-    - user: root
-    - group: root
-    - mode: 755
+    - file_mode: 755
 
