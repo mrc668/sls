@@ -25,7 +25,7 @@ perimeter.dependancies:
 
 uls_perimeter:
   file.recurse:
-    - source: salt://sls/perimeter/bin
+    - source: salt://sls/perimiter/bin
     - name: /usr/local/sbin
     - user: root
     - group: root
