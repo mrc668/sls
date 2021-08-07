@@ -1,0 +1,12 @@
+# source: salt://pillars/zeek/promisc.service.jinja
+[Unit]
+Description=set interface for sniffing
+Before=zeek.service
+After=network.service
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/ip l set dev {{grains['sniff']}} promisc on
+
+[Install]
+WantedBy=network.target

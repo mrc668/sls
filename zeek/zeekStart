@@ -1,0 +1,6 @@
+#!/bin/bash
+# source: salt://pillars/zeek/zeekStart
+
+/sbin/ip link set dev enp0s25 up
+/opt/zeek/bin/zeekctl install
+/opt/zeek/bin/zeekctl start

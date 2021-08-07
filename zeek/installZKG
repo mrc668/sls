@@ -1,0 +1,28 @@
+#!/bin/bash
+# source salt://pillars/zeek/installZKG
+
+export PATH=$PATH:~/.local/bin
+#pip3 install --user zeek zkg
+zkg autoconfig
+
+
+#[ -f /opt/zeek/lib/zeek/plugins/Zeek_AF_Packet/VERSION ] && exit;
+#rm -rf build master.zip zeek-af_packet-plugin-master
+
+# af_packet
+# ./configure --install-root=/opt/zeek/share/zeek/site/packages --with-kernel=/usr/src/kernels/3.10.0-1160.2.2.el7.x86_64
+# ./configure --install-root=/opt/zeek/share/zeek/site/packages --with-kernel=/usr/src/kernels/$(uname -r)
+#[ -f /usr/local/include/linux/user.h ] || exit -1
+
+[ -f /opt/zeek/lib/zeek/plugins/Zeek_AF_Packet/VERSION ] || yes | zkg install j-gras/zeek-af_packet-plugin 
+
+zkg list installed | grep log-add-vlan-everywhere  -q || yes | zkg install corelight/log-add-vlan-everywhere
+#zkg list installed | grep dovehawk -q || yes | zkg install dovehawk
+zkg list installed | grep ja3 -q || yes | zkg install ja3
+zkg list installed | grep hassh -q || yes | zkg install hassh
+zkg list installed | grep long-connections -q || yes | zkg install corelight/bro-long-connections
+
+echo Installed packges
+zkg list installed | tee  zkg.list.installed
+
+

@@ -1,0 +1,32 @@
+# source: salt://pillars/zeek/zeek.service
+[Unit]
+Description=zeek network analysis engine
+
+[Service]
+Type=forking
+# was oneshot
+# zeek systemd[1]: New main PID 16255 does not belong to service, and PID file is not owned by root. Refusing.
+# https://askubuntu.com/questions/1044464/new-main-pid-does-not-belong-to-service-and-pid-file-is-not-owned-by-root
+PIDFile=/opt/zeek/spool/zeek/.pid
+Environment=BROPATH=.:/opt/zeek/share/zeek:/opt/zeek/share/zeek/policy:/opt/zeek/share/zeek/site:/opt/zeek/share/zeek/site
+Environment=BRO_PLUGIN_PATH=/opt/zeek/lib/zeek/plugins:/opt/zeek/lib/zeek/plugins
+Environment=ZEEKPATH=.:/opt/zeek/share/zeek:/opt/zeek/share/zeek/policy:/opt/zeek/share/zeek/site:/opt/zeek/share/zeek/site
+Environment=ZEEK_PLUGIN_PATH=/opt/zeek/lib/zeek/plugins:/opt/zeek/lib/zeek/plugins
+Environment=PATH=/opt/zeek/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+ExecStartPre=/sbin/ifup {{ grains['sniff']}}
+ExecStartPre=/sbin/ip l set dev {{grains['sniff']}} promisc on
+ExecStartPre=/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/capstats
+ExecStartPre=/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/zeek
+ExecStartPre=/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/zeekctl
+ExecStartPre=/usr/bin/su zeek -c "env | sort > /dev/shm/zeek.env"
+ExecStartPre=/usr/bin/su zeek -c "/opt/zeek/bin/zeekctl cleanup"
+ExecStartPre=/usr/bin/su zeek -c "/opt/zeek/bin/zeekctl check"
+ExecStartPre=/usr/bin/su zeek -c "/opt/zeek/bin/zeekctl install"
+ExecStart=/usr/bin/su zeek -c "/opt/zeek/bin/zeekctl start"
+ExecStop=/usr/bin/su zeek -c "/opt/zeek/bin/zeekctl stop"
+RestartSec=10s
+RemainAfterExit=yes
+TimeoutStopSec=600
+
+[Install]
+WantedBy=multi-user.target
