@@ -1,4 +1,4 @@
-# salt zeek state.apply pillars/zeek
+# salt zeek state.apply sls/zeek
 {% set definedOS = salt['grains.filter_by']({
     'empty': {'pkgname': 'zeek-lts', 'svcname': 'zeek' },
   }, 
@@ -36,7 +36,7 @@ zeek.dependancies:
 
 /etc/yum.repos.d/zeek.repo:
   file.managed:
-    - source: salt://pillars/zeek/repo
+    - source: salt://sls/zeek/repo
     - user: root
     - group: root
     - mode: 644
@@ -51,8 +51,21 @@ zeek:
     - shell: /bin/bash
     - group: zeek
 
+uls_zeek:
+  file.recurse:
+    - source: salt://sls/zeek/bin
+    - name: /usr/local/sbin
+    - user: root
+    - group: root
+    - file_mode: 755
+
 include:
-  - pillars/zeek/postpackage
-  - pillars/zeek/zkg
-  - pillars/zeek/otx
+  - sls/zeek/postpackage
+  - sls/zeek/zkg
+#  - sls/zeek/otx # No longer support otx in zeek. Moved to perimiter.
+
+/usr/local/sbin/zeek-beats:
+  cmd.run:
+      - cwd: /
+      - runas: root
 

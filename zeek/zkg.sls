@@ -4,7 +4,7 @@
 
 /home/zeek/installZKG:
   file.managed:
-    - source: salt://pillars/zeek/installZKG
+    - source: salt://sls/zeek/installZKG
     - user: zeek
     - group: zeek
     - mode: 755
@@ -14,7 +14,7 @@
 
 /opt/zeek/share/zeek/site/local.zeek:
   file.managed:
-    - source: salt://pillars/zeek/local.zeek
+    - source: salt://sls/zeek/local.zeek
     - user: zeek
     - group: zeek
     - mode: 644

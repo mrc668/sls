@@ -1,0 +1,12 @@
+#!/bin/bash
+# source: salt://sls/zeek/bin/zeek-beats
+
+[ -d /etc/filebeat ] || exit
+[ -f /etc/filebeat/modules.d/zeek.yml ] && exit
+[ -f /etc/filebeat/modules.d/zeek.yml.disabled ] && {
+  filebeat modules enable system
+  filebeat setup
+  systemctl restart filebeat
+}
+
+
