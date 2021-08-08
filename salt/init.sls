@@ -38,5 +38,12 @@ salt-minion:
     - group: root
     - mode: 644
 
+upgrade:
+  file.managed:
+    - name: /etc/cron.daily/salt3003.sh
+    - source: salt://sls/salt/salt3003.sh
+    - user: root
+    - group: root
+    - mode: 755
 
 
