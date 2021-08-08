@@ -1,0 +1,14 @@
+#!/bin/bash
+
+setPerm() {
+  chown -R zeek:zeek /opt/zeek
+  chmod g+s /opt/zeek/etc /opt/zeek/share/zeek/site /opt/zeek/etc/zkg /opt/zeek/logs /opt/zeek/spool /opt/zeek/spool/brokerstore
+  chmod o+rx /opt/zeek/etc /opt/zeek/etc/zkg /opt/zeek/share/zeek/site
+}
+
+stat -c "%U" /opt/zeek/share/zeek/site/packages | grep zeek -q || setPerm
+stat -c "%U" /opt/zeek/lib/zeek/python/zeekpkg/__pycache__ | grep zeek -q || setPerm
+stat -c "%U" ./var/lib/zkg/clones/source/zeek/.git/HEAD | grep zeek -q || setPerm
+
+
+

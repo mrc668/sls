@@ -1,7 +1,3 @@
-/usr/bin/pip3 install --user zeek zkg:
-  cmd.run:
-    - cwd: /
-
 /home/zeek/installZKG:
   file.managed:
     - source: salt://sls/zeek/installZKG
@@ -18,4 +14,10 @@
     - user: zeek
     - group: zeek
     - mode: 644
+
+zkg-set-perms:
+  cmd.run:
+    - name: /usr/local/sbin/zeek-perms
+    - cwd: /
+    - runas: root
 

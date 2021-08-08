@@ -8,22 +8,14 @@
   service.enabled: 
     - name: zeek
 
-{% set definedPath = salt['grains.filter_by']({
-    'zeek': {'node': 'personality/zeek/zeek-node.cfg', 'networks': 'personality/zeek/zeek-networks.cfg' },
-    'empty': {'node': 'sls/zeek/node.cfg',  'networks': 'sls/zeek/zeek-networks.cfg' },
-  }, 
-  default='empty',
-  grain='localhost'
-  ) 
-%}
+/etc/cron.d/zeek:
+  file.managed:
+    - source: salt://sls/zeek/cron
+    - user: root
+    - group: root
+    - mode: 644
 
-#/etc/cron.d/zeek:
-#  file.managed:
-#    - source: salt://sls/zeek/cron
-#    - user: root
-#    - group: root
-#    - mode: 644
-#
+
 /etc/profile.d/zeek.sh:
   file.managed:
     - source: salt://sls/zeek/profile.d
@@ -31,7 +23,6 @@
     - group: root
     - mode: 644
 
-#- source: salt://{{ definedPath.node }}
 /opt/zeek/etc/node.cfg:
   file.managed:
     - user: zeek
@@ -44,13 +35,20 @@
 
 /opt/zeek/etc/networks.cfg:
   file.managed:
-    - source: salt://{{ definedPath.networks }}
+    - source: salt://personality/{{ grains['nodename'] }}/zeek-networks.cfg
     - user: zeek
     - group: zeek
     - mode: 644
 
-/usr/bin/chown -R zeek:zeek /opt/zeek:
-  cmd.run
+/opt/zeek/etc/zeekctl.cfg:
+  file.managed:
+    - source: salt://sls/zeek/zeekctl.cfg
+    - user: zeek
+    - group: zeek
+    - mode: 644
+
+#/usr/bin/chown -R zeek:zeek /opt/zeek:
+#  cmd.run
 
 #/usr/local/sbin/uli:
 #  file.managed:

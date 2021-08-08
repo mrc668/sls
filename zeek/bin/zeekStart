@@ -1,6 +1,15 @@
 #!/bin/bash
 # source: salt://pillars/zeek/zeekStart
 
-/sbin/ip link set dev enp0s25 up
-/opt/zeek/bin/zeekctl install
-/opt/zeek/bin/zeekctl start
+dev=$1
+LOGGER="logger -p daemon.info -t zeekStart"
+sbin/ifup $dev 2>&1 | $LOGGER
+sbin/ip l set dev $dev promisc on 2>&1 | $LOGGER
+/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/capstats 2>&1 | $LOGGER
+/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/zeek 2>&1 | $LOGGER
+/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/zeekctl 2>&1 | $LOGGER
+/usr/bin/su zeek -c "env | sort > /dev/shm/zeek.env"
+/usr/bin/su zeek -c "/opt/zeek/bin/zeekctl cleanup" 2>&1 | $LOGGER
+/usr/bin/su zeek -c "/opt/zeek/bin/zeekctl check" 2>&1 | $LOGGER
+/usr/bin/su zeek -c "/opt/zeek/bin/zeekctl deploy" 2>&1 | $LOGGER
+
