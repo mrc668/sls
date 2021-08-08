@@ -1,12 +1,14 @@
 #!/bin/bash
 # source: salt://sls/zeek/bin/zeek-beats
 
+LOGGER="logger -sp daemon.info -t zeekStart"
 [ -d /etc/filebeat ] || exit 0
 [ -f /etc/filebeat/modules.d/zeek.yml ] && exit 0
 [ -f /etc/filebeat/modules.d/zeek.yml.disabled ] && {
-  filebeat modules enable system
-  filebeat setup
-  systemctl restart filebeat
+  echo enabling file beats for zeek.
+  filebeat modules enable system 2>&1 | $LOGGER
+  filebeat setup 2>&1 | $LOGGER
+  systemctl restart filebeat 2>&1 | $LOGGER
 }
 
 
