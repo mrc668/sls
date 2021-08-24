@@ -12,5 +12,8 @@ grep "Result: False"  /var/log/salt-call* -q && { echo 4; exit 4; }
 # file exists and has size greater than 0
 [ -s /var/log/salt-call.log ] || { echo 5; exit 5; }
 
+# file should be less than 10 minutes since last update.
+[ $(( $(date +%s) - $(stat -c +%Y /var/log/salt-call.log) )) -lt 600 ] || { echo 6; exit 6; }
+
 echo 0; exit
 
