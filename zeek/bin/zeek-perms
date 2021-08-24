@@ -8,7 +8,7 @@ setPerm() {
 
 stat -c "%U" /opt/zeek/share/zeek/site/packages | grep zeek -q || setPerm
 stat -c "%U" /opt/zeek/lib/zeek/python/zeekpkg/__pycache__ | grep zeek -q || setPerm
-stat -c "%U" ./var/lib/zkg/clones/source/zeek/.git/HEAD | grep zeek -q || setPerm
+stat -c "%U" /opt/var/lib/zkg/clones/source/zeek/.git/HEAD | grep zeek -q || setPerm
 
 
 

@@ -11,7 +11,7 @@
 @load protocols/ssh/software
 @load protocols/http/software
 @load protocols/mysql/software
-@load protocols/rdp/software
+@load protocols/rdp/indicate_ssl
 @load protocols/dns/detect-external-names
 @load protocols/dns/log-original-query-case
 @load protocols/ftp/detect
@@ -28,5 +28,5 @@
 @load frameworks/files/hash-all-files
 @load frameworks/files/detect-MHR
 @load policy/frameworks/notice/extend-email/hostnames
-#@load ja3
+@load ./ja3
 @load packages

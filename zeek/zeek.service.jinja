@@ -8,6 +8,7 @@ Type=forking
 # zeek systemd[1]: New main PID 16255 does not belong to service, and PID file is not owned by root. Refusing.
 # https://askubuntu.com/questions/1044464/new-main-pid-does-not-belong-to-service-and-pid-file-is-not-owned-by-root
 PIDFile=/opt/zeek/spool/zeek/.pid
+User=zeek
 Environment=BROPATH=.:/opt/zeek/share/zeek:/opt/zeek/share/zeek/policy:/opt/zeek/share/zeek/site:/opt/zeek/share/zeek/site
 Environment=BRO_PLUGIN_PATH=/opt/zeek/lib/zeek/plugins:/opt/zeek/lib/zeek/plugins
 Environment=ZEEKPATH=.:/opt/zeek/share/zeek:/opt/zeek/share/zeek/policy:/opt/zeek/share/zeek/site:/opt/zeek/share/zeek/site

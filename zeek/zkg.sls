@@ -1,12 +1,12 @@
-/home/zeek/installZKG:
+/usr/local/sbin//installZKG:
   file.managed:
     - source: salt://sls/zeek/installZKG
-    - user: zeek
-    - group: zeek
+    - user: root
+    - group: root
     - mode: 755
   cmd.run:
-      - cwd: /home/zeek
-      - runas: zeek
+      - cwd: /root
+      - runas: root
 
 /opt/zeek/share/zeek/site/local.zeek:
   file.managed:
