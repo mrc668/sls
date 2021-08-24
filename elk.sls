@@ -7,6 +7,9 @@
 %}
 
 
+# Install instructions:
+# https://phoenixnap.com/kb/install-elk-stack-centos-8
+
 /etc/yum.repos.d/elk.repo:
   file.managed:
     - source: salt://managedFiles/elk/{{definedRole.src}}
