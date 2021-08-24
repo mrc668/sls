@@ -17,6 +17,12 @@ zabbix-agent:
   ) 
 %}
 
+{% if grains['os'] == 'Springdale Open Enterprise' %}
+include:
+  - sls/zabbix/libsss
+{% endif %}
+
+
 /etc/zabbix/zabbix_agentd.conf:
   file.managed:
     - source: salt://{{definedRole.src}}
