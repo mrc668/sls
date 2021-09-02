@@ -2,7 +2,7 @@
 # source: salt://sls/zabbix/bin/zg_yum_check_update
 
 [ -s /var/log/yum-check-update.log ] || { echo 1; exit 1; }
-[ $(cat /var/log/yum-check-update.log | wc -l) -lt 10 ] || { echo 2; exit 2; }
+[ $(cat /var/log/yum-check-update.log | wc -l) -lt 9 ] || { echo 2; exit 2; }
 
 echo 0; exit 0
 

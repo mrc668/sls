@@ -9,11 +9,19 @@
 grep "Data failed to compile" /var/log/salt-call* -q && { echo 3; exit 3; }
 grep "Result: False"  /var/log/salt-call* -q && { echo 4; exit 4; }
 
-# file exists and has size greater than 0
-[ -s /var/log/salt-call.log ] || { echo 5; exit 5; }
-
 # file should be less than 10 minutes since last update.
-[ $(( $(date +%s) - $(stat -c +%Y /var/log/salt-call.log) )) -lt 600 ] || { echo 6; exit 6; }
+lastUpdate=$(stat -c +%Y /var/log/salt-call.log)
+now=$(date +%s)
+timeDiff=$(( $now - $lastUpdate ))
+[ $timeDiff -lt 600 ] || { echo 6; exit 6; }
+
+# file exists and has size greater than 0
+[ -s /var/log/salt-call.log ] || {
+  [ $timeDiff -gt 60 ] && { 
+    echo 5; 
+    exit 5; 
+  }
+}
 
 echo 0; exit
 
