@@ -28,6 +28,7 @@ zeek.dependancies:
       - rsync
       - network-scripts
       - epel-release
+      - sssd-client
 
 /etc/yum.repos.d/zeek.repo:
   file.managed:
