@@ -12,11 +12,8 @@ LOGGER="logger -p daemon.info -t zeekStart"
 /usr/sbin/ifup $dev 2>&1 | $LOGGER
 /usr/sbin/ip l set dev $dev promisc on 2>&1 | $LOGGER
 /usr/local/sbin/zeek-perms
-/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/capstats 2>&1 | $LOGGER
-/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/zeek 2>&1 | $LOGGER
-/usr/sbin/setcap cap_net_raw+eip /opt/zeek/bin/zeekctl 2>&1 | $LOGGER
 /usr/bin/su zeek -c "env | sort > /dev/shm/zeek.env"
 /usr/bin/su zeek -c "/opt/zeek/bin/zeekctl cleanup" 2>&1 | $LOGGER
 /usr/bin/su zeek -c "/opt/zeek/bin/zeekctl check" 2>&1 | $LOGGER
 /usr/bin/su zeek -c "/opt/zeek/bin/zeekctl deploy" 2>&1 | $LOGGER
-pgrep -u zeek -f /opt/zeek/bin/zeek > /opt/zeek/spool/zeek/.pid
+pgrep -u zeek -f /opt/zeek/bin/zeek | su zeek -c "cat >/opt/zeek/spool/zeek/.pid" 

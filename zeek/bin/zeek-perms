@@ -1,14 +1,27 @@
 #!/bin/bash
+# source salt://sls/zeek/bin/zeek-perms
 
+LOGGER="logger -p daemon.info -t zeekStart"
 setPerm() {
   chown -R zeek:zeek /opt/zeek
   chmod g+s /opt/zeek/etc /opt/zeek/share/zeek/site /opt/zeek/etc/zkg /opt/zeek/logs /opt/zeek/spool /opt/zeek/spool/brokerstore
   chmod o+rx /opt/zeek/etc /opt/zeek/etc/zkg /opt/zeek/share/zeek/site
 }
 
-stat -c "%U" /opt/zeek/share/zeek/site/packages | grep zeek -q || setPerm
-stat -c "%U" /opt/zeek/lib/zeek/python/zeekpkg/__pycache__ | grep zeek -q || setPerm
-stat -c "%U" /opt/var/lib/zkg/clones/source/zeek/.git/HEAD | grep zeek -q || setPerm
+checkPerm() {
+  [ -f "$1" ] && {
+    stat -c "%U" $1 | grep zeek -q || setPerm
+  }
+}
 
+setPerm
+checkPerm /opt/zeek/share/zeek/site/packages
+checkPerm /opt/zeek/share/zeek/site/packages/zeek-af_packet-plugin
+checkPerm /opt/zeek/spool/state.db
+checkPerm /opt/zeek/lib/zeek/python/zeekpkg/__pycache__
+checkPerm /opt/var/lib/zkg/clones/source/zeek/.git/HEAD
 
+/usr/sbin/setcap cap_net_raw,cap_net_admin+eip /opt/zeek/bin/capstats 2>&1 | $LOGGER
+/usr/sbin/setcap cap_net_raw,cap_net_admin+eip /opt/zeek/bin/zeek 2>&1 | $LOGGER
+/usr/sbin/setcap cap_net_raw,cap_net_admin+eip /opt/zeek/bin/zeekctl 2>&1 | $LOGGER
 

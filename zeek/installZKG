@@ -1,15 +1,16 @@
 #!/bin/bash
-# source salt://pillars/zeek/installZKG
+# source salt://sls/zeek/installZKG
 
 export PATH=$PATH:~/.local/bin:/opt/zeek/bin
-[ -d /home/zeek/.local/bin ] || pip3 install --user zeek zkg
-[ -f /home/zeek/.zkg/config ] || zkg autoconfig
+#[ -d /home/zeek/.local/bin ] || pip3 install --user zeek zkg
+#[ -f /home/zeek/.zkg/config ] || zkg autoconfig
 env | sort > zkg.install-env.txt
 
 
 #[ -f /opt/zeek/lib/zeek/plugins/Zeek_AF_Packet/VERSION ] && exit;
 
-[ -f /opt/zeek/lib/zeek/plugins/Zeek_AF_Packet/VERSION ] || yes | zkg install j-gras/zeek-af_packet-plugin 
+#[ -f /opt/zeek/lib/zeek/plugins/Zeek_AF_Packet/VERSION ] || yes | zkg install j-gras/zeek-af_packet-plugin 
+zkg list installed | grep zeek-af_packet -q || yes | zkg install j-gras/zeek-af_packet-plugin 
 
 zkg list installed | grep ja3 -q || yes | zkg install ja3
 zkg list installed | grep hassh -q || yes | zkg install hassh

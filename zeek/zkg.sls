@@ -1,4 +1,7 @@
 /usr/local/sbin//installZKG:
+  pkg:
+    - name: zeek-lts-zkg
+    - installed
   file.managed:
     - source: salt://sls/zeek/installZKG
     - user: root

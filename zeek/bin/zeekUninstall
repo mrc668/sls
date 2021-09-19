@@ -1,0 +1,9 @@
+#!/bin/bash
+# source: salt://pillars/zeek/zeekUninstall
+
+pkill -9 -u zeek
+rpm -qa | grep ^zeek | xargs yum -y remove
+rm -rf /opt/zeek
+/usr/sbin/userdel -r zeek
+
+
