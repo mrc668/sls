@@ -6,6 +6,11 @@
   ) 
 %}
 
+zeek.dependancies: 
+  pkg.installed:
+    - pkgs:
+      - nmon
+      - jq
 
 # Install instructions:
 # https://phoenixnap.com/kb/install-elk-stack-centos-8
