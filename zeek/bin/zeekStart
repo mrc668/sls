@@ -1,14 +1,20 @@
 #!/bin/bash
 # source: salt://pillars/zeek/zeekStart
 
+dev=$1
 export BROPATH=.:/opt/zeek/share/zeek:/opt/zeek/share/zeek/policy:/opt/zeek/share/zeek/site
 export BRO_PLUGIN_PATH=/opt/zeek/lib/zeek/plugins
 export ZEEKPATH=.:/opt/zeek/share/zeek:/opt/zeek/share/zeek/policy:/opt/zeek/share/zeek/site
 export ZEEK_PLUGIN_PATH=/opt/zeek/lib/zeek/plugins
 
 
-dev=$1
 LOGGER="logger -p daemon.info -t zeekStart"
+[ -n "$dev" ] || {
+  $LOGGER "Usage: $0 interface"
+  echo  "Usage: $0 interface"
+  exit 23
+}
+
 /usr/sbin/ifup $dev 2>&1 | $LOGGER
 /usr/sbin/ip l set dev $dev promisc on 2>&1 | $LOGGER
 /usr/local/sbin/zeek-perms
@@ -16,4 +22,6 @@ LOGGER="logger -p daemon.info -t zeekStart"
 /usr/bin/su zeek -c "/opt/zeek/bin/zeekctl cleanup" 2>&1 | $LOGGER
 /usr/bin/su zeek -c "/opt/zeek/bin/zeekctl check" 2>&1 | $LOGGER
 /usr/bin/su zeek -c "/opt/zeek/bin/zeekctl deploy" 2>&1 | $LOGGER
-pgrep -u zeek -f /opt/zeek/bin/zeek | su zeek -c "cat >/opt/zeek/spool/zeek/.pid" 
+pgrep -u zeek -f /opt/zeek/bin/zeek | su zeek -c "cat - >/opt/zeek/spool/zeek/.pid" 
+exit 0
+
