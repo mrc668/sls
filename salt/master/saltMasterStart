@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ps -u salt -f > /dev/null || systemctl start salt-master
+
+
