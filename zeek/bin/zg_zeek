@@ -1,0 +1,5 @@
+#!/bin/bash
+# source salt://sls/zeek/bin/zg_zeek
+
+pgrep -u zeek -f /opt/zeek/bin/zeek || echo 0
+
