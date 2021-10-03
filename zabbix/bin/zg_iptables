@@ -1,0 +1,11 @@
+#!/bin/bash
+# source salt://sls/zabbix/bin/zg_iptables
+
+rules=$(/sbin/iptables -nvL | wc -l)
+[ $rules -gt 8 ] || {
+  echo 0
+  exit 1
+}
+echo $rules
+exit 0
+
