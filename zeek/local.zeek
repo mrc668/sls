@@ -10,6 +10,7 @@
 @load protocols/smtp/software
 @load protocols/ssh/software
 @load protocols/http/software
+@load protocols/http/detect-webapps
 @load protocols/mysql/software
 @load protocols/rdp/indicate_ssl
 @load protocols/dns/detect-external-names
@@ -29,4 +30,7 @@
 @load frameworks/files/detect-MHR
 @load policy/frameworks/notice/extend-email/hostnames
 @load ./ja3
+@load policy/protocols/ssl/heartbleed
+@load policy/protocols/conn/vlan-logging
+@load policy/protocols/conn/mac-logging
 @load packages
