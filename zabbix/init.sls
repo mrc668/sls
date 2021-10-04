@@ -22,13 +22,20 @@ include:
   - sls/zabbix/libsss
 {% endif %}
 
-
 /etc/zabbix/zabbix_agentd.conf:
   file.managed:
-    - source: salt://{{definedRole.src}}
+    - source: salt://sls/zabbix/zabbix_agentd.jinja
     - user: root
     - group: root
     - mode: 644
+    - template: jinja
+    - defaults:
+        zabbix_server: "10.0.10.3"
+{% if grains['zabbix_server'] is defined %}
+    - context:
+        zabbix_server: {{ grains['zabbix_server'] }}
+{% endif %}
+        
 
 /etc/zabbix/zabbix_agentd.d/enableRemoteCommands.conf:
   file.managed:
