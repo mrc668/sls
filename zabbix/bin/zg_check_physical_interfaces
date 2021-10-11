@@ -1,0 +1,24 @@
+#!/bin/bash
+# source salt://sls/zabbix/bin/zg_check_physical_interfaces
+
+# if $SUDO_USER exists and is set to zabbix then be quiet
+
+[ -r /etc/zabbix/eotn.d/zg_check_physical_interfaces ] || {
+  [ "$SUDO_USER" != "zabbix" ] && echo /etc/zabbix/eotn.d/zg_check_physical_interfaces not readable
+  echo 2; # Not configured
+  exit;
+}
+source /etc/zabbix/eotn.d/zg_check_physical_interfaces
+
+RV=0
+for i in $INTERFACES; do
+  ethtool $i | grep -E "Speed|Duplex|Link.det" | md5sum | grep 64a7ebf8988835f6294210bc1662074b -q || {
+    RV=1
+    [ "$SUDO_USER" != "zabbix" ] && { 
+      echo ethtool $i
+      ethtool $i | grep -E "Speed|Duplex|Link.det"
+     }
+  }
+done
+echo $RV
+

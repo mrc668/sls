@@ -1,5 +1,5 @@
 #!/bin/bash
-# source salt://sls/ntp/zg-chrony-pid
+# source salt://sls/zabbix/bin/zg-chrony-pid
 
 pgrep -u chrony || echo 0
 
