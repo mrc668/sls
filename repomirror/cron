@@ -1,0 +1,4 @@
+#!/bin/bash
+# source salt://personality/backup/repomirror/cron
+
+/usr/local/sbin/repomirror 2>&1 | logger -p daemon.info -t cron.daily.reposync

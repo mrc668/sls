@@ -1,0 +1,39 @@
+#!/bin/bash
+# source salt://personality/backup/repomirror/repomirror
+
+[ -d /nas2012/Web/CentOS ] || exit -1
+releasever=$(cat /etc/redhat-release | sed -e "s/^.*release //" | cut -d\. -f1)
+RepoDir=/nas2012/Web/CentOS/reposync/$releasever
+LogDir=/var/log/reposync
+mkdir -p $RepoDir
+mkdir -p $LogDir
+
+# Create core.xml
+# yum-groups-manager -n Core --id=core --save=core.xml --mandatory bash glibc kernel tcpdump openssh-server yum rpm basesystem coreutils xfsprogs xfsdump lsof strace cronie curl dhclient filesystem hostname initscripts iproute iprutils iptables iptables-services iputils irqbalance kbd kexec-tools less man-db ncurses openssh-clients openssh-server parted passwd policycoreutils procps-ng rootfiles rsyslog selinux-policy-targeted setup shadow-utils sudo systemd tar tuned util-linux vim-minimal biosdevname dracut-config-rescue kernel-tools libsysfs linux-firmware lshw microcode_ctl postfix dracut-config-generic dracut-fips dracut-fips-aesni dracut-network initial-setup openssh-keycat rdma-core selinux-policy-mls tboot ntp
+
+
+function syncit {
+        before=$(find $RepoDir/$i -name \*.rpm | wc -l)
+        logger -p daemon.info -t reposync "syncing $i. $before rpms."
+        /usr/bin/reposync -p $RepoDir --source --repoid $1 > $LogDir/${i}.log
+        after=$(find $RepoDir/$i -name \*.rpm | wc -l)
+        logger -p daemon.info -t reposync "completed $i. $after rpms."
+        [ $before -ne $after ] && {
+                case $i in
+                'base')
+                        /usr/bin/createrepo -g $RepoDir/$i/repodata/core.xml $RepoDir/$i
+                ;;
+                *)
+                        /usr/bin/createrepo  $RepoDir/$i
+                ;;
+                esac
+        }
+}
+
+for i in $(grep \\[ /etc/yum.repos.d/*.repo | grep -Ev "Vault|Media" | sed -e "s/^.*\[//; s/\].*$//;"); do
+        echo $i --- $RepoDir/$i
+        [ -d $RepoDir/$i ] || mkdir $RepoDir/$i
+        [ -d $RepoDir/$i ] || echo BARF! failed to  $RepoDir/$i
+        [ -d $RepoDir/$i ] && syncit $i
+done
+
