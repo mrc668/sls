@@ -13,18 +13,25 @@ mkdir -p $LogDir
 
 
 function syncit {
-        before=$(find $RepoDir/$i -name \*.rpm | wc -l)
-        logger -p daemon.info -t reposync "syncing $i. $before rpms."
-        /usr/bin/reposync -p $RepoDir --source --repoid $1 > $LogDir/${i}.log
-        after=$(find $RepoDir/$i -name \*.rpm | wc -l)
-        logger -p daemon.info -t reposync "completed $i. $after rpms."
+        r=$1
+        src=""
+        echo $r | grep -E "source|src" -q && src='--source'
+
+        before=$(find $RepoDir/$r -name \*.rpm | wc -l)
+        logger -p daemon.info -t reposync "syncing $r. $before rpms."
+
+        /usr/bin/reposync -p $RepoDir $src --repoid $r > $LogDir/${r}.log
+
+        after=$(find $RepoDir/$r -name \*.rpm | wc -l)
+        logger -p daemon.info -t reposync "completed $r. $after rpms."
+
         [ $before -ne $after ] && {
-                case $i in
+                case $r in
                 'base')
-                        /usr/bin/createrepo -g $RepoDir/$i/repodata/core.xml $RepoDir/$i
+                        /usr/bin/createrepo -g $RepoDir/$r/repodata/core.xml $RepoDir/$r
                 ;;
                 *)
-                        /usr/bin/createrepo  $RepoDir/$i
+                        /usr/bin/createrepo  $RepoDir/$r
                 ;;
                 esac
         }
@@ -35,5 +42,6 @@ for i in $(grep \\[ /etc/yum.repos.d/*.repo | grep -Ev "Vault|Media" | sed -e "s
         [ -d $RepoDir/$i ] || mkdir $RepoDir/$i
         [ -d $RepoDir/$i ] || echo BARF! failed to  $RepoDir/$i
         [ -d $RepoDir/$i ] && syncit $i
+        [ -d $RepoDir/$i ] && rm -f $RepoDir/$i/directory-not-managed
 done
 
