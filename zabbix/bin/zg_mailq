@@ -1,0 +1,6 @@
+#!/bin/bash
+# source salt://sls/zabbix/bin/zg_mailq
+
+msgs=$(/usr/bin/mailq | wc -l)
+[ $msgs -lt 4 ] && echo 0 || echo $msgs
+

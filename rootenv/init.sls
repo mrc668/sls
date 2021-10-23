@@ -26,3 +26,15 @@
     - group: root
     - mode: 640
 
+pickup:
+  file.managed:
+    - source: salt://sls/rootenv/pickup
+    - name: /usr/local/sbin/pickup
+    - user: root
+    - group: root
+    - mode: 755
+  cmd.run:
+    - cwd: /
+    - runas: root
+
+

@@ -1,0 +1,5 @@
+#!/bin/bash
+# source salt://sls/zabbix/bin/zg_var-spool-mail-root
+
+stat -c %s /var/spool/mail/root
+
