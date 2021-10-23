@@ -18,9 +18,3 @@
     - group: zeek
     - mode: 644
 
-zkg-set-perms:
-  cmd.run:
-    - name: /usr/local/sbin/zeek-perms
-    - cwd: /
-    - runas: root
-

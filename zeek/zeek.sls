@@ -11,9 +11,3 @@ zeek:
       - zeek-lts-zkg
       - zeekctl-lts
 
-zeek-set-perms:
-  cmd.run:
-    - name: /usr/local/sbin/zeek-perms
-    - cwd: /
-    - runas: root
-

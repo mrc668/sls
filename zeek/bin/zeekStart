@@ -23,5 +23,6 @@ LOGGER="logger -p daemon.info -t zeekStart"
 /usr/bin/su zeek -c "/opt/zeek/bin/zeekctl check" 2>&1 | $LOGGER
 /usr/bin/su zeek -c "/opt/zeek/bin/zeekctl deploy" 2>&1 | $LOGGER
 pgrep -u zeek -f /opt/zeek/bin/zeek | su zeek -c "cat - >/opt/zeek/spool/zeek/.pid" 
+/bin/true
 exit 0
 
