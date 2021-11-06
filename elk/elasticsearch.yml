@@ -1,7 +1,10 @@
 # source: salt://managedFiles/elk/elasticsearch.yml
 path.data: /var/lib/elasticsearch
 path.logs: /var/log/elasticsearch
-#network.host: 0.0.0.0
+node.name: netops
+network.host: 0.0.0.0
+discovery.seed_hosts: ["127.0.0.1"]
+cluster.initial_master_nodes: ["netops" ]
 xpack.security.enabled: false
 xpack.security.authc.api_key.enabled: false
 

@@ -4,46 +4,7 @@
 include:
   - sls/elk/setup
   - sls/elk/elastic
-
-kibana:
-  pkg:
-    - installed
-  service.running: 
-    - name: kibana
-    - enable: true
-    - watch:
-      - file: /etc/kibana/kibana.yml
-  user.present:
-    - fullname: kibana service user
-    - shell: /sbin/nologin
-    - home: /home/kibana
-    - groups:
-      - kibana
-
-/etc/kibana/kibana.yml:
-  file.managed:
-    - source: salt://managedFiles/elk/kibana.yml
-    - user: root
-    - group: root
-    - mode: 644
-
-/var/log/kibana:
-  file.directory:
-    - user: kibana
-    - group: kibana
-    - mode: 755
-
-/etc/logrotate.d/kibana.conf:
-  file.managed:
-    - source: salt://managedFiles/elk/logrotate
-    - user: root
-    - group: root
-    - mode: 644
-
-openjdk:
-  pkg:
-     - installed
-     - name: java-1.8.0-openjdk
+  - sls/elk/kibana
 
 /etc/systemd/system/logstash.service:
   file.managed:

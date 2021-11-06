@@ -1,17 +1,10 @@
 
-{% set definedRole = salt['grains.filter_by']({
-    'default': {'src': 'repo' },
-  }, 
-    default='default',
-    grain='localhost'
-  ) 
-%}
-
 elk.dependancies: 
   pkg.installed:
     - pkgs:
       - nmon
       - jq
+      - java-1.8.0-openjdk
 
 /etc/yum.repos.d/elk.repo:
   file.managed:
