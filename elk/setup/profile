@@ -1,0 +1,2 @@
+# source: salt://managedFiles/elk/elk-profile.sh
+export PATH=$PATH:/usr/share/elasticsearch/bin/

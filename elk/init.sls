@@ -1,57 +1,9 @@
-{% set definedRole = salt['grains.filter_by']({
-    'default': {'src': 'repo' },
-  }, 
-    default='default',
-    grain='localhost'
-  ) 
-%}
-
-zeek.dependancies: 
-  pkg.installed:
-    - pkgs:
-      - nmon
-      - jq
-
 # Install instructions:
 # https://phoenixnap.com/kb/install-elk-stack-centos-8
 
-/etc/yum.repos.d/elk.repo:
-  file.managed:
-    - source: salt://managedFiles/elk/{{definedRole.src}}
-    - user: root
-    - group: root
-    - mode: 644
-
-/etc/profile.d/elk.sh:
-  file.managed:
-    - source: salt://managedFiles/elk/elk-profile.sh
-    - user: root
-    - group: root
-    - mode: 644
-
-{% set definedOS = salt['grains.filter_by']({
-    'default': {'pkgname': 'elasticsearch', 'svcname': 'elasticsearch' },
-  }, 
-    default='default',
-    grain='os'
-  ) 
-%}
-
-elasticsearch:
-  pkg:
-    - installed
-  service.running: 
-    - name: {{definedOS.svcname}}
-    - enable: true
-    - watch:
-      - file: /etc/elasticsearch/elasticsearch.yml
-
-/etc/elasticsearch/elasticsearch.yml:
-  file.managed:
-    - source: salt://managedFiles/elk/elasticsearch.yml
-    - user: root
-    - group: root
-    - mode: 644
+include:
+  - sls/elk/setup
+  - sls/elk/elastic
 
 kibana:
   pkg:

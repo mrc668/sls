@@ -1,0 +1,7 @@
+# source: salt://managedFiles/elk/elasticsearch.yml
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+#network.host: 0.0.0.0
+xpack.security.enabled: false
+xpack.security.authc.api_key.enabled: false
+
