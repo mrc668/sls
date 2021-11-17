@@ -4,7 +4,7 @@
     - source: salt://sls/sysctl/dotd
     - user: root
     - group: root
-    - dir_more: 755
+    - dir_mode: 755
     - file_mode: 644
 
 {% set definedVer = salt['grains.filter_by']({

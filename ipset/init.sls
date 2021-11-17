@@ -34,6 +34,6 @@ ipset.dependancies:
     - source: salt://sls/ipset/ipsets
     - user: root
     - group: root
-    - dir_more: 755
+    - dir_mode: 755
     - file_mode: 644
 

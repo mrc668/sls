@@ -12,7 +12,7 @@
     - source: salt://personality/{{ grains['nodename']}}/network-scripts
     - user: root
     - group: root
-    - dir_more: 755
+    - dir_mode: 755
     - file_mode: 644
 
 /usr/bin/md5sum -c ns.md5:

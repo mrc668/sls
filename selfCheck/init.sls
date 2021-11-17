@@ -22,7 +22,7 @@
     - source: salt://sls/selfCheck/mp3
     - user: root
     - group: root
-    - dir_more: 755
+    - dir_mode: 755
     - file_mode: 644
 
 selfCheck.dependancies: 
