@@ -1,12 +1,15 @@
 # source: salt://managedFiles/elk/kibana.yml
 # more info: https://www.elastic.co/guide/en/kibana/master/settings.html
 server.host: "0.0.0.0"
+server.name: netops
 logging.dest: /var/log/kibana/kibana.log
-#server.basePath: "/elk"
-server.rewriteBasePath: false
 #xpack.encryptedSavedObkjects.encryptionKey: EikCugawyicdatDyWimutsegutkaihasgeHodIfsItUt5
 xpack.encryptedSavedObjects.encryptionKey: "something_at_least_32_characters"
 xpack.security.enabled: true
 elasticsearch.username: "admin" 
 elasticsearch.password: "Product85Cat44Gave"
+#server.basePath: "/elk"
+#server.basePath: "/"
+server.rewriteBasePath: false # Deprecated?
+#server.publicBaseUrl: https://monitor.calnek.com/elk
 
