@@ -1,0 +1,9 @@
+#!/bin/bash
+# source: salt://managedFiles/elk/bounce.filebeat
+
+
+/usr/bin/logger -p daemon.info -t salt bounce.filebeat
+/usr/bin/systemctl stop filebeat
+/usr/bin/rm -f /var/log/filebeat/*
+/usr/bin/systemctl start filebeat
+

@@ -20,3 +20,11 @@ elk.dependancies:
     - group: root
     - mode: 644
 
+elk.scripts:
+  file.recurse:
+    - source: salt://sls/elk/bin
+    - user: root
+    - group: root
+    - file_mode: 755
+    - dir_mode: 755
+

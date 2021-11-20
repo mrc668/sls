@@ -10,7 +10,12 @@
 
     # Set custom paths for the log files. If left empty,
     # Filebeat will choose the paths depending on your OS.
-    #var.paths:
+    var.paths: [
+      "/var/log/messages",
+      "/var/log/security",
+      "/var/log/cron",
+      "/var/log/maillog"
+    ]
 
   # Authorization logs
   auth:

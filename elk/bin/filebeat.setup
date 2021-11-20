@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# what is the condition to run this?
+systemctl status filebeat >/dev/null 2>&1 && exit
+
+/usr/bin/filebeat modules enable system
+/usr/bin/filebeat modules enable iptables
+
+systemctl status elasticsearch >/dev/null 2>&1 && /usr/bin/filebeat modules enable elasticsearch
+systemctl status logstash >/dev/null 2>&1 && /usr/bin/filebeat modules enable logstash
+systemctl status kibana >/dev/null 2>&1 && /usr/bin/filebeat modules enable kibana
+systemctl status mariadb >/dev/null 2>&1 && /usr/bin/filebeat modules enable mysql
+systemctl status mysql >/dev/null 2>&1 && /usr/bin/filebeat modules enable mysql
+systemctl status apache >/dev/null 2>&1 && /usr/bin/filebeat modules enable apache
+systemctl status nginx >/dev/null 2>&1 && /usr/bin/filebeat modules enable nginx
+
+/usr/bin/filebeat setup --template -E output.logstash.enabled=true -E 'output.elasticsearch.hosts=["10.0.10.8:9200"]' | tee /dev/shm/filebeat.setup.log:
+/usr/bin/filebeat setup -e -E output.logstash.enabled=true -E output.elasticsearch.hosts=['10.0.10.8:9200'] -E setup.kibana.host=10.0.10.8:5601 | tee -a /dev/shm/filebeat.setup.log:
+
+
+
+/usr/bin/filebeat modules list | tee -a /dev/shm/filebeat.setup.log:
+
+/usr/local/sbin/bounce.filebeat
