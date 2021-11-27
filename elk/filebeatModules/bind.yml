@@ -1,0 +1,24 @@
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  paths:
+    - /var/log/named/general.log
+    - /var/log/named/database.log
+    - /var/log/named/security.log
+    - /var/log/named/config.log
+    - /var/log/named/resolver.log
+    - /var/log/named/xfer-in.log
+    - /var/log/named/xfer-out.log
+    - /var/log/named/notify.log
+    - /var/log/named/client.log
+    - /var/log/named/unmatched.log
+    - /var/log/named/network.log
+    - /var/log/named/update.log
+    - /var/log/named/dispatch.log
+    - /var/log/named/dnssec.log
+    - /var/log/named/queries.log
+    - /var/log/named/lame-servers.log
+    - /var/log/named/default.log
+  fields:
+    bind: true
+

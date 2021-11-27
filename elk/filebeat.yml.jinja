@@ -1,0 +1,76 @@
+# source: salt://managedFiles/elk/filebeat.yml
+# /etc/filebeat/filebeat.reference.yml
+# https://www.elastic.co/guide/en/beats/filebeat/index.html
+
+logging.level: debug
+logging.to_syslog: false
+logging.to_files: true
+logging.metrics:
+  enabled: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 10
+  permissions: 0644
+
+# more ILM settings: https://www.elastic.co/guide/en/beats/filebeat/master/ilm.html
+setup.ilm.overwrite: true
+
+    #- /var/log/messages
+    #- /var/log/secure
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/yum.log
+    - /var/log/dnf.log
+    - /var/log/boot.log
+    - /var/log/salt-call.log
+    - /var/spool/mail/root
+{% if fileBeats contains bind %}
+    - /var/log/named/general.log
+    - /var/log/named/database.log
+    - /var/log/named/security.log
+    - /var/log/named/config.log
+    - /var/log/named/resolver.log
+    - /var/log/named/xfer-in.log
+    - /var/log/named/xfer-out.log
+    - /var/log/named/notify.log
+    - /var/log/named/client.log
+    - /var/log/named/unmatched.log
+    - /var/log/named/network.log
+    - /var/log/named/update.log
+    - /var/log/named/dispatch.log
+    - /var/log/named/dnssec.log
+    - /var/log/named/queries.log
+    - /var/log/named/lame-servers.log
+    - /var/log/named/default.log
+{% endif %}
+{% if fileBeats contains dhcpd %}
+    - /var/lib/dhcpd/dhcpd.leases
+    - /etc/dhcp/dhcpd.conf
+{% endif %}
+{% if fileBeats contains openvpn %}
+    - /dev/shm/support-status.log
+{% endif %}
+
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: true
+  reload.period: 30s
+setup.template.settings:
+  index.number_of_shards: 1
+
+setup.kibana:
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+
+output.logstash:
+  hosts: ["10.0.10.8:5044"]
+  ssl.enabled: false
+
