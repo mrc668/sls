@@ -1,11 +1,14 @@
 #!/bin/bash
 
+export PATH=$PATH:/sbin:/usr/sbin
+
 ipset create newlist hash:net comment
 ipset flush newlist
 
 urls="
 http://rules.emergingthreats.net/blockrules/compromised-ips.txt
 http://www.blocklist.de/lists/bruteforcelogin.txt
+http://lists.blocklist.de/lists/all.txt
 http://dragonresearchgroup.org/insight/sshpwauth.txt
 http://dragonresearchgroup.org/insight/vncprobe.txt
 http://www.nothink.org/blacklist/blacklist_malware_http.txt
@@ -14,6 +17,7 @@ http://hosts-file.net/rss.asp
 https://feodotracker.abuse.ch/blocklist/?download=ipblocklist
 http://www.binarydefense.com/banlist.txt
 http://www.talosintelligence.com/feeds/ip-filter.blf
+http://spamsnapper.to/ssh-violations
 "
 
 for u in  $urls ; do
