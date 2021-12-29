@@ -1,0 +1,2 @@
+*/5 * * * * root /usr/local/sbin/speedtest.sh > /var/log/speedtest.log 2>&1
+
