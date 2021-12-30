@@ -1,16 +1,19 @@
 #!/bin/bash
+PATH=/usr/bin:/usr/local/bin:$PATH
 
-[ -x /usr/local/bin/speedtest-cli ] || /usr/bin/pip3 install speedtest-cli
+[ -x /usr/local/bin/speedtest-cli ] || [ -x /usr/bin/speedtest-cli ] || /usr/bin/pip3 install speedtest-cli
 
-[ -n "$LESSOPEN" ] || sleep $(( $RANDOM % 180 ))
+[ -n "$LESSOPEN" ] || sleep $(( $RANDOM % 800 ))
 server=$(grep Server= /etc/zabbix/zabbix_agentd.conf | cut -d= -f2)
 
-down=$(/usr/local/bin/speedtest-cli --json --no-upload | jq ' . | { download }' -c | sed -e "s/^.*://; s/\..*$//;")
+down=$(speedtest-cli --json --no-upload | jq ' . | { download }' -c | sed -e "s/^.*://; s/\..*$//;")
 echo $down $(( $down/1024 )) $(( $down/1024/1024 ))
 /usr/bin/zabbix_sender -z $server -s $(hostname -s) -k speedtest.down -o  $(( $down/1024/1024 ))
 
-up=$(/usr/local/bin/speedtest-cli --json --no-download | jq ' . | { upload }' -c | sed -e "s/^.*://; s/\..*$//;")
+up=$(speedtest-cli --json --no-download | jq ' . | { upload }' -c | sed -e "s/^.*://; s/\..*$//;")
 echo $up $(( $up/1024 )) $(( $up/1024/1024 ))
 /usr/bin/zabbix_sender -z $server -s $(hostname -s) -k speedtest.up -o  $(( $up/1024/1024 ))
+
+/usr/bin/zabbix_sender -z $server -s $(hostname -s) -k speedtest.server -o  "$(speedtest-cli --list | head -2 | tail -1)"
 
 
