@@ -16,13 +16,13 @@ now=$(date +%s)
 timeDiff=$(( $now - $lastUpdate ))
 [ $timeDiff -lt 600 ] || { echo 6; exit 6; }
 
-# file exists and has size greater than 0
-[ -s /var/log/salt-call.log ] || {
-  [ $timeDiff -gt 60 ] && { 
-    echo 5; 
-    exit 5; 
-  }
-}
+## file exists and has size greater than 0
+#[ -s /var/log/salt-call.log ] || {
+#  [ $timeDiff -gt 60 ] && { 
+#    echo 5; 
+#    exit 5; 
+#  }
+#}
 
 echo 0; exit
 
