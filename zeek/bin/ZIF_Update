@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd /opt/zeek/share/zeek/site/Zeek-Intelligence-Feeds
+git fetch origin master
+git reset --hard FETCH_HEAD
+git clean -df
+
+

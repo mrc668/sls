@@ -1,11 +1,4 @@
 
-elk.dependancies: 
-  pkg.installed:
-    - pkgs:
-      - nmon
-      - jq
-      - java-1.8.0-openjdk
-
 /etc/yum.repos.d/elk.repo:
   file.managed:
     - source: salt://sls/elk/setup/repo
@@ -23,6 +16,7 @@ elk.dependancies:
 elk.scripts:
   file.recurse:
     - source: salt://sls/elk/bin
+    - name: /usr/local/sbin
     - user: root
     - group: root
     - file_mode: 755

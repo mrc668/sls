@@ -2,9 +2,11 @@
 # /etc/filebeat/filebeat.reference.yml
 # https://www.elastic.co/guide/en/beats/filebeat/index.html
 
-logging.level: info
+logging.level: debug
 logging.to_syslog: false
 logging.to_files: true
+logging.metrics:
+  enabled: true
 logging.files:
   path: /var/log/filebeat
   name: filebeat
@@ -25,6 +27,23 @@ filebeat.inputs:
     - /var/log/boot.log
     - /var/log/salt-call.log
     - /var/spool/mail/root
+    - /var/log/named/general.log
+    - /var/log/named/database.log
+    - /var/log/named/security.log
+    - /var/log/named/config.log
+    - /var/log/named/resolver.log
+    - /var/log/named/xfer-in.log
+    - /var/log/named/xfer-out.log
+    - /var/log/named/notify.log
+    - /var/log/named/client.log
+    - /var/log/named/unmatched.log
+    - /var/log/named/network.log
+    - /var/log/named/update.log
+    - /var/log/named/dispatch.log
+    - /var/log/named/dnssec.log
+    - /var/log/named/queries.log
+    - /var/log/named/lame-servers.log
+    - /var/log/named/default.log
 
 filebeat.config.modules:
   path: ${path.config}/modules.d/*.yml

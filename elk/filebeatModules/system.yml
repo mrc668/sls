@@ -12,7 +12,6 @@
     # Filebeat will choose the paths depending on your OS.
     var.paths: [
       "/var/log/messages",
-      "/var/log/security",
       "/var/log/cron",
       "/var/log/maillog"
     ]

@@ -1,0 +1,14 @@
+#!/bin/bash
+
+[ -f /opt/zeek/share/zeek/site/Zeek-Intelligence-Feeds/README.md ] || {
+  # install
+  cd /opt/zeek/share/zeek/site/ 
+  git clone https://github.com/CriticalPathSecurity/Zeek-Intelligence-Feeds.git Zeek-Intelligence-Feeds 
+  sed -e "s|usr/local|opt|" -i Zeek-Intelligence-Feeds/main.zeek
+
+  grep   /opt/zeek/share/zeek/site/local.zeek -q || {
+    echo "@load Zeek-Intelligence-Feeds" >> /opt/zeek/share/zeek/site/local.zeek
+    pgrep -u zeek -f /opt/zeek/bin/zeek >/dev/null && /opt/zeek/bin/zeekctl deploy
+  }
+}
+

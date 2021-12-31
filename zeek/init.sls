@@ -12,6 +12,7 @@ include:
   - sls/zeek/zeek
   - sls/zeek/postpackage
   - sls/zeek/zkg
+  - sls/zeek/ThreatIntel
 
 /usr/local/sbin/zeek-beats:
   cmd.run:

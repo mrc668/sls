@@ -34,3 +34,4 @@
 @load policy/protocols/conn/vlan-logging
 @load policy/protocols/conn/mac-logging
 @load packages
+@load Zeek-Intelligence-Feeds

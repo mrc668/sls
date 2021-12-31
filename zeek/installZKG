@@ -2,9 +2,11 @@
 # source salt://sls/zeek/installZKG
 
 export PATH=$PATH:~/.local/bin:/opt/zeek/bin
+export CMAKE_MODULE_PATH=/opt/zeek/share/zeek/cmake
 #[ -d /home/zeek/.local/bin ] || pip3 install --user zeek zkg
 #[ -f /home/zeek/.zkg/config ] || zkg autoconfig
 env | sort > zkg.install-env.txt
+rm -f zkg.search.ldap
 
 
 #[ -f /opt/zeek/lib/zeek/plugins/Zeek_AF_Packet/VERSION ] && exit;
@@ -16,6 +18,11 @@ zkg list installed | grep ja3 -q || yes | zkg install ja3
 zkg list installed | grep hassh -q || yes | zkg install hassh
 zkg list installed | grep long-connections -q || yes | zkg install corelight/zeek-long-connections
 zkg list installed | grep log-add-vlan-everywhere  -q || yes | zkg install corelight/log-add-vlan-everywhere
+zkg list installed | grep zeek-log-all-http-headers  -q || yes | zkg install sethhall/zeek-log-all-http-headers
+zkg list installed | grep spicy-plugin -q || yes | zkg install zeek/spicy-plugin > zkg.install.spicy.log 2>&1
+zkg list installed | grep spicy-ldap  -q || yes | zkg install zeek/zeek/spicy-ldap > zkg.install.zeek.zeek.spicy.log 2>&1
+zkg list installed | grep cve-2021-44228  -q || yes | zkg install cve-2021-44228 master > zkg.install.cve-2021-44228.log 2>&1
+[ -f zkg.search.ldap ] || zkg search ldap > zkg.search.ldap 2>&1
 
 zkg env | sort | tee zkg.env.txt
 zkg list installed | tee  zkg.list.installed
