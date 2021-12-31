@@ -1,3 +1,4 @@
 # src: salt://salt/managedFiles/cron.d.salt
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-*/5 * * * * root salt-call state.apply > /var/log/salt-call.log 2>/var/log/salt-call.err
+#*/5 * * * * root salt-call state.apply > /var/log/salt-call.log 2>/var/log/salt-call.err
+*/5 * * * * root /usr/local/sbin/saltcall

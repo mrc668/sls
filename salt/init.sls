@@ -7,6 +7,11 @@
   ) 
 %}
 
+#{% if grains['os'] == 'Springdale Open Enterprise' %}
+#include:
+#  - sls/salt/sdlSalt
+#{% endif %}
+
 salt-minion:
   pkg:
     - installed
@@ -38,12 +43,22 @@ salt-minion:
     - group: root
     - mode: 644
 
+salt3003:
+  file.absent:
+    - name: /etc/cron.daily/salt3003.sh
+
 upgrade:
   file.managed:
-    - name: /etc/cron.daily/salt3003.sh
-    - source: salt://sls/salt/salt3003.sh
+    - name: /etc/cron.daily/saltrepo.sh
+    - source: salt://sls/salt/saltrepo.sh
     - user: root
     - group: root
     - mode: 755
 
+/usr/local/sbin/saltcall:
+  file.managed:
+    - source: salt://sls/salt/saltcall
+    - user: root
+    - group: root
+    - mode: 755
 
