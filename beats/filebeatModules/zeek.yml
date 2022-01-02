@@ -10,6 +10,9 @@
   connection:
     enabled: true
     var.paths: [ "/opt/zeekLogs/current/conn.log" ]
+  conn_long:
+    enabled: true
+    var.paths: [ "/opt/zeekLogs/current/conn_long.log" ]
   dce_rpc:
     enabled: true
     var.paths: [ "/opt/zeekLogs/current/dce_rpc.log" ]

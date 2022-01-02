@@ -1,6 +1,6 @@
 include:
   - sls/elk/setup
-  - sls/beats
+  - sls/beats/filebeat
 
 beat.scripts:
   file.recurse:

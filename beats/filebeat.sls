@@ -1,5 +1,3 @@
-include: 
-  - sls/elk/setup
 
 filebeat:
   pkg:
@@ -14,7 +12,7 @@ filebeat:
 
 /etc/filebeat/filebeat.yml:
   file.managed:
-    - source: salt://sls/elk/filebeat.yml.jinja
+    - source: salt://sls/beats/filebeat.yml.jinja
     - user: root
     - group: root
     - mode: 644
@@ -28,7 +26,7 @@ filebeat:
 {% for m in [ "system", "iptables" ] %}
 /etc/filebeat/modules.d/{{m}}.yml:
   file.managed:
-    - source: salt://sls/elk/filebeatModules/{{m}}.yml
+    - source: salt://sls/beats/filebeatModules/{{m}}.yml
     - user: root
     - group: root
     - mode: 644
@@ -37,7 +35,7 @@ filebeat:
 {% for m in grains["fileBeats"]  %}
 /etc/filebeat/modules.d/{{m}}.yml:
   file.managed:
-    - source: salt://sls/elk/filebeatModules/{{m}}.yml
+    - source: salt://sls/beats/filebeatModules/{{m}}.yml
     - user: root
     - group: root
     - mode: 644
@@ -45,8 +43,17 @@ filebeat:
 
 /usr/lib/systemd/system/filebeat.service:
   file.managed:
-    - source: salt://sls/elk/filebeat.service
+    - source: salt://sls/beats/filebeat.service
     - user: root
     - group: root
     - mode: 644
+
+zeekConnLong:
+  file.recurse:
+    - source: salt://sls/beats/filebeatZeekConnLong
+    - name: /usr/share/filebeat/module/zeek/conn_long
+    - user: root
+    - group: root
+    - file_mode: 644
+    - dir_mode: 755
 

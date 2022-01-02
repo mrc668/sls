@@ -1,0 +1,21 @@
+module_version: 1.0
+
+var:
+  - name: paths
+    default:
+      - /var/log/bro/current/conn_long.log
+    os.linux:
+      - /var/log/bro/current/conn_long.log
+    os.darwin:
+      - /usr/local/var/logs/current/conn_long.log
+  - name: tags
+    default: [zeek.conn_long]
+  - name: internal_networks
+    default: [ private ]
+
+ingest_pipeline: ingest/pipeline.yml
+input: config/conn_long.yml
+
+requires.processors:
+- name: geoip
+  plugin: ingest-geoip

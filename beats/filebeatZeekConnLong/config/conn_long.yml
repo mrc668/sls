@@ -1,0 +1,106 @@
+type: log
+paths:
+{{ range $i, $path := .paths }}
+ - {{$path}}
+{{ end }}
+exclude_files: [".gz$"]
+tags: {{.tags | tojson}}
+publisher_pipeline.disable_host: {{ inList .tags "forwarded" }}
+
+json.keys_under_root: false
+
+processors:
+  - drop_fields:
+      fields: ["json.orig_bytes","json.resp_bytes","json.tunnel_parents"]
+      ignore_missing: true
+  - rename:
+      fields:
+        - from: "json"
+          to: "zeek.conn_long"
+
+        - from: "zeek.conn_long.duration"
+          to: "temp.duration"
+
+        - from: "zeek.conn_long.id.orig_h"
+          to: "source.address"
+
+        - from: "zeek.conn_long.id.orig_p"
+          to: "source.port"
+
+        - from: "zeek.conn_long.id.resp_h"
+          to: "destination.address"
+
+        - from: "zeek.conn_long.id.resp_p"
+          to: "destination.port"
+
+        - from: "zeek.conn_long.proto"
+          to: "network.transport"
+
+        - from: "zeek.conn_long.service"
+          to: "network.protocol"
+
+        - from: "zeek.conn_long.uid"
+          to: "zeek.session_id"
+
+        - from: "zeek.conn_long.orig_ip_bytes"
+          to: "source.bytes"
+
+        - from: "zeek.conn_long.resp_ip_bytes"
+          to: "destination.bytes"
+
+        - from: "zeek.conn_long.orig_pkts"
+          to: "source.packets"
+
+        - from: "zeek.conn_long.resp_pkts"
+          to: "destination.packets"
+
+        - from: "zeek.conn_long.conn_state"
+          to: "zeek.conn_long.state"
+
+      ignore_missing: true
+      fail_on_error: false
+
+  - rename:
+      when.equals.network.transport: icmp
+      fields:
+        - from: "source.port"
+          to: "zeek.conn_long.icmp.type"
+
+        - from: "destination.port"
+          to: "zeek.conn_long.icmp.code"
+
+      ignore_missing: true
+      fail_on_error: false
+  - convert:
+      fields:
+        - {from: "zeek.session_id", to: "event.id"}
+        - {from: "source.address", to: "source.ip", type: "ip"}
+        - {from: "destination.address", to: "destination.ip", type: "ip"}
+      ignore_missing: true
+      fail_on_error: false
+  - add_fields:
+      target: event
+      fields:
+        kind: event
+        category:
+          - network
+  - if:
+      equals.network.transport: icmp
+    then:
+      community_id:
+        fields:
+          icmp_type: zeek.conn_long.icmp.type
+          icmp_code: zeek.conn_long.icmp.code
+    else:
+      community_id:
+{{ if .internal_networks }}
+  - add_network_direction:
+      source: source.ip
+      destination: destination.ip
+      target: network.direction
+      internal_networks: {{ .internal_networks | tojson }}
+{{ end }}
+  - add_fields:
+      target: ''
+      fields:
+        ecs.version: 1.12.0
