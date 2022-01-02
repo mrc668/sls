@@ -1,1 +1,7 @@
 # file list in filebeat.yml
+filebeat.inputs:
+- type: filestream
+  enabled: true
+  paths:
+    - /var/lib/dhcpd/dhcpd.leases
+    - /etc/dhcp/dhcpd.conf

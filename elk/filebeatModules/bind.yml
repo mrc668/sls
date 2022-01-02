@@ -19,6 +19,4 @@ filebeat.inputs:
     - /var/log/named/queries.log
     - /var/log/named/lame-servers.log
     - /var/log/named/default.log
-  fields:
-    bind: true
 
