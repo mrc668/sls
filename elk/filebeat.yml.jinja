@@ -38,6 +38,8 @@ setup.template.settings:
   index.number_of_shards: 1
 
 setup.kibana:
+  host: ["10.0.10.8:5601"]
+
 processors:
   - add_host_metadata:
       when.not.contains.tags: forwarded
