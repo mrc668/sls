@@ -2,7 +2,7 @@ include:
   - sls/elk/setup
   - sls/beats
 
-elk.scripts:
+beat.scripts:
   file.recurse:
     - source: salt://sls/elk/bin
     - name: /usr/local/sbin
