@@ -1,24 +1,23 @@
 #!/bin/bash
+# source salt://sls/elk/bin
 
-# what is the condition to run this?
-systemctl status filebeat >/dev/null 2>&1 && exit
+date | tee /dev/shm/filebeat.setup.log
+#/usr/bin/filebeat modules enable system
+#/usr/bin/filebeat modules enable iptables
+ENABLE="system iptables "
 
-/usr/bin/filebeat modules enable system
-/usr/bin/filebeat modules enable iptables
+for i in elasticsearch logstash kibana mariadb mysql apache nginx zeek dhcpd; do 
+  systemctl status $i 2>/dev/null| grep enabled -q && ENABLE="$ENABLE $i "
+done
+logger -p daemon.info -t filebeat 
+echo /usr/bin/filebeat modules enable $ENABLE | tee -a /dev/shm/filebeat.setup.log
+/usr/bin/filebeat modules enable $ENABLE
 
-systemctl status elasticsearch >/dev/null 2>&1 && /usr/bin/filebeat modules enable elasticsearch
-systemctl status logstash >/dev/null 2>&1 && /usr/bin/filebeat modules enable logstash
-systemctl status kibana >/dev/null 2>&1 && /usr/bin/filebeat modules enable kibana
-systemctl status mariadb >/dev/null 2>&1 && /usr/bin/filebeat modules enable mysql
-systemctl status mysql >/dev/null 2>&1 && /usr/bin/filebeat modules enable mysql
-systemctl status apache >/dev/null 2>&1 && /usr/bin/filebeat modules enable apache
-systemctl status nginx >/dev/null 2>&1 && /usr/bin/filebeat modules enable nginx
-
-/usr/bin/filebeat setup --template -E output.logstash.enabled=true -E 'output.elasticsearch.hosts=["10.0.10.8:9200"]' | tee /dev/shm/filebeat.setup.log:
-/usr/bin/filebeat setup -e -E output.logstash.enabled=true -E output.elasticsearch.hosts=['10.0.10.8:9200'] -E setup.kibana.host=10.0.10.8:5601 | tee -a /dev/shm/filebeat.setup.log:
-
+#/usr/bin/filebeat setup --template -E output.logstash.enabled=true -E 'output.elasticsearch.hosts=["10.0.10.8:9200"]' | tee -a /dev/shm/filebeat.setup.log
+#/usr/bin/filebeat setup -e -E output.logstash.enabled=true -E output.elasticsearch.hosts=['10.0.10.8:9200'] -E setup.kibana.host=10.0.10.8:5601 | tee -a /dev/shm/filebeat.setup.log
 
 
-/usr/bin/filebeat modules list | tee -a /dev/shm/filebeat.setup.log:
 
-/usr/local/sbin/bounce.filebeat
+/usr/bin/filebeat modules list | tee -a /dev/shm/filebeat.setup.log
+rm -f /etc/filebeat/modules.d/*disabled
+

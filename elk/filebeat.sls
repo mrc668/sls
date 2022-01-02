@@ -1,3 +1,5 @@
+include: 
+  - sls/elk/setup
 
 filebeat:
   pkg:
@@ -40,4 +42,11 @@ filebeat:
     - group: root
     - mode: 644
 {% endfor %}
+
+/usr/lib/systemd/system/filebeat.service:
+  file.managed:
+    - source: salt://sls/elk/filebeat.service
+    - user: root
+    - group: root
+    - mode: 644
 
