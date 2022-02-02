@@ -1,0 +1,41 @@
+#1/bin/bash
+
+# source salt://salt/sls/zimbra/bin
+# base on instructions from https://www.tecmint.com/install-zimbra-collaboration-suite-on-centos-rhel/
+
+CURRENT=https://files.zimbra.com/downloads/8.8.15_GA/zcs-NETWORK-8.8.15_GA_3953.RHEL8_64.20200629025823.tgz
+CURRENT=https://files.zimbra.com/downloads/9.0.0_GA/zcs-9.0.0_GA_3954.RHEL8_64.20200629045300.tgz
+CURRENT=https://files.zimbra.com/downloads/9.0.0_GA/zcs-NETWORK-9.0.0_GA_3954.RHEL8_64.20200629045300.tgz
+CURRENT=https://files.zimbra.com/downloads/8.8.15_GA/zcs-8.8.15_GA_3953.RHEL8_64.20200629025823.tgz
+
+rpm -q postfix && {
+  systemctl stop postfix
+  systemctl disable postfix
+  yum -y remove postfix
+}
+
+rpm -qa --qf '%{VERSION}-%{RELEASE} %{SUMMARY}\n' gpg-pubkey* | grep Zimbra -q || rpm --import https://files.zimbra.com/downloads/security/public.key
+
+cd /root
+[ -d adminguide ] && {
+  cd adminguide
+  git fetch
+} || git clone https://github.com/Zimbra/adminguide.git
+
+cd /root
+[ -d installguide ] && {
+  cd installguide
+  git fetch
+} || git clone https://github.com/Zimbra/installguides.git
+
+cd /root
+wget https://files.zimbra.com/downloads/zimbra-video-server/0.11.2/videoserver-r8.tgz
+
+cd /root
+[ -f $(basename $CURRENT) ] || wget $CURRENT
+tar -xzf $(basename $CURRENT)
+
+cd $(find /root -maxdepth 1 -type d -name zcs\* | tail -1)
+./install --platform-override
+
+
