@@ -1,8 +1,11 @@
 #!/bin/bash
+PATH=/opt/zeek/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/usr/share/elasticsearch/bin/
 
 cd /opt/zeek/share/zeek/site/Zeek-Intelligence-Feeds
+
 git fetch origin master
 git reset --hard FETCH_HEAD
 git clean -df
+chown zeek:zeek *
 
 

@@ -26,6 +26,7 @@ zeek.dependancies:
       - bind-utils
       - whois
       - rsync
+      - numactl
       - network-scripts
       - epel-release
       - sssd-client
