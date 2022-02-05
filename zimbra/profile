@@ -1,0 +1,1 @@
+export PATH=/opt/zimbra/common/lib/jvm/openjdk-*-zimbra/bin:/opt/zimbra/common/bin:/opt/zimbra/common/jetty_home/bin:/opt/zimbra/bin:/opt/zimbra/libexec/installer/bin:$PATH

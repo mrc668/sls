@@ -30,3 +30,11 @@ zimbra.repo:
     - group: root
     - mode: 644
 
+zimbra.profile:
+  file.managed:
+    - name: /etc/profile.d/zimbra.sh
+    - source: salt://sls/zimbra/profile
+    - user: root
+    - group: root
+    - mode: 644
+
