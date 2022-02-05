@@ -13,5 +13,5 @@ include:
   - sls/elk/elastic
   - sls/elk/kibana
   - sls/elk/logstash
-  - sls/elk/beats
+  - sls/beats
 
