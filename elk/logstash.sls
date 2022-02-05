@@ -26,3 +26,17 @@ logstash:
   file.managed:
     - source: salt://sls/elk/logstash.service
 
+systemd-reload:
+  cmd.run:
+    - name: systemctl --system daemon-reload
+
+logstash.service:
+  file.managed:
+    - source: salt://sls/elk/logstash.service
+    - name: /etc/systemd/system/logstash.service
+    - user: root
+    - group: root
+    - mode: 644
+    - onchanges_in: 
+      - cmd: systemd-reload
+
