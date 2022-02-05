@@ -5,7 +5,7 @@ server.name: netops
 logging.dest: /var/log/kibana/kibana.log
 #xpack.encryptedSavedObkjects.encryptionKey: EikCugawyicdatDyWimutsegutkaihasgeHodIfsItUt5
 xpack.encryptedSavedObjects.encryptionKey: "something_at_least_32_characters"
-xpack.security.enabled: true
+xpack.security.enabled: false
 elasticsearch.username: "admin" 
 elasticsearch.password: "Product85Cat44Gave"
 #server.basePath: "/elk"

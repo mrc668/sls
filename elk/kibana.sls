@@ -27,8 +27,11 @@ kibana:
     - mode: 755
 
 /etc/logrotate.d/kibana.conf:
+  file.abscent
+
+/etc/logrotate.d/kibana:
   file.managed:
-    - source: salt://sls/elk/kibana.conf
+    - source: salt://sls/elk/kibana.logrotate
     - user: root
     - group: root
     - mode: 644
