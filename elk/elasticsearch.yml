@@ -1,6 +1,9 @@
 # source: salt://managedFiles/elk/elasticsearch.yml
+# Going to move this to a new disk
 path.data: /var/lib/elasticsearch
 path.logs: /var/log/elasticsearch
+#path.data: /var/elasticsearch/lib
+#path.logs: /var/elasticsearch/log
 node.name: netops
 network.host: 0.0.0.0
 discovery.seed_hosts: ["127.0.0.1"]
