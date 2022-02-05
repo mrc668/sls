@@ -1,0 +1,7 @@
+#!/bin/bash
+
+yum -y remove kibana
+rm -rf /etc/kibana /var/log/kibana /etc/logrotate.d/kibana*
+
+
+

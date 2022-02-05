@@ -1,0 +1,12 @@
+#!/bin/bash
+
+systemctl stop kibana
+systemctl stop elasticsearch
+curl -XGET 'localhost:9600/_node/stats/events?pretty'
+#curl -XGET 'localhost:9600/_node/stats/pipelines?pretty'
+systemctl stop logstash
+
+systemctl start logstash
+systemctl start elasticsearch
+systemctl start kibana
+
