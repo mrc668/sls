@@ -30,6 +30,9 @@ function syncit {
                 'base')
                         /usr/bin/createrepo -g $RepoDir/$r/repodata/core.xml $RepoDir/$r
                 ;;
+                'sdl8-baseos')
+                        /usr/bin/createrepo -g $RepoDir/$r/repodata/core.xml $RepoDir/$r
+                ;;
                 *)
                         /usr/bin/createrepo  $RepoDir/$r
                 ;;

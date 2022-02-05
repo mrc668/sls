@@ -12,7 +12,7 @@ doTheWork() {
   grep " 7" /etc/redhat-release -q && Major=7
 
   # Get latestest repo
-  curl -sS https://repo.saltproject.io/py3/redhat/$Major/x86_64/latest.repo > /etc/yum.repos.d/salt.repo
+  curl -sS https://repo.saltproject.io/py3/redhat/$Major/x86_64/latest.repo | sed -e "/failovermethod/d" > /etc/yum.repos.d/salt.repo
 
   # update
   yum -y update salt salt-minion salt-master > /var/log/yum-update-salt.log 2>&1
@@ -25,6 +25,7 @@ doTheWork() {
   }
 }
 
+uname -n | grep zcs -q && doTheWork
 uname -n | grep netops -q && doTheWork
 uname -n | grep devil -q && doTheWork
 uname -n | grep rosco -q && doTheWork
