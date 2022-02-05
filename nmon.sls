@@ -1,0 +1,4 @@
+nmon:
+  pkg:
+    - installed
+
