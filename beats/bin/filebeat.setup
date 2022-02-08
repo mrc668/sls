@@ -1,6 +1,8 @@
 #!/bin/bash
 # source salt://sls/elk/bin
 
+# Called as pre-exec on filebeat.service
+
 date | tee /dev/shm/filebeat.setup.log
 #/usr/bin/filebeat modules enable system
 #/usr/bin/filebeat modules enable iptables

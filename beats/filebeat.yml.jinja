@@ -2,7 +2,7 @@
 # /etc/filebeat/filebeat.reference.yml
 # https://www.elastic.co/guide/en/beats/filebeat/index.html
 
-logging.level: debug
+logging.level: info
 logging.to_syslog: false
 logging.to_files: true
 logging.metrics:
@@ -10,10 +10,10 @@ logging.metrics:
 logging.files:
   path: /var/log/filebeat
   name: filebeat
-  keepfiles: 10
+  keepfiles: 5
   permissions: 0644
   rotateonstartup: true
-  rotateeverybytes: 1073741824 # 1g
+  rotateeverybytes: 10485760  # 10M
 
 # more ILM settings: https://www.elastic.co/guide/en/beats/filebeat/master/ilm.html
 setup.ilm.overwrite: true
