@@ -1,0 +1,24 @@
+#!/bin/bash
+# source salt://sls/elk/bin/zg_elastic
+
+rm -f /dev/shm/zg_elastic*
+LogFile=$(mktemp /dev/shm/zg_elasticXXXXXX)
+
+report() {
+  echo $1
+  rm -f $LogFile
+  exit;
+}
+
+RunningPIDs=$(pgrep -u elasticsearch)
+[ -n "$RunningPIDs" ] || report 2
+
+/usr/bin/curl -sS -XGET 'localhost:9200' > $LogFile
+
+grep "You Know, for Search" $LogFile -q || report 1 # Status is not green
+  
+
+
+report 0 # all is well
+
+

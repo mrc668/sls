@@ -1,5 +1,6 @@
 # Install instructions:
 # https://phoenixnap.com/kb/install-elk-stack-centos-8
+# Another set of instructions: https://www.bmc.com/blogs/elasticsearch-v7-cluster/
 
 elk.dependancies: 
   pkg.installed:

@@ -1,0 +1,25 @@
+#!/bin/bash
+# source salt://sls/elk/bin/zg_kibana
+
+rm -f /dev/shm/zg_kibana*
+LogFile=$(mktemp /dev/shm/zg_kibanaXXXXXX)
+
+report() {
+  echo $1
+  rm -f $LogFile
+  exit;
+}
+
+RunningPIDs=$(pgrep -u kibana)
+[ -n "$RunningPIDs" ] || report 2
+
+/usr/bin/curl -sS -XGET 'localhost:9600/_node/stats/process?pretty' > $LogFile
+/usr/bin/curl -sS -XGET 'localhost:5601/status' > $LogFile
+
+grep Green $LogFile -q || report 1 # Status is not green
+  
+
+
+report 0 # all is well
+
+
