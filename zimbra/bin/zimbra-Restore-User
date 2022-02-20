@@ -1,6 +1,8 @@
 #!/bin/bash
 # source: salt://sls/zimbra/bin/zimbra-Restore-User
 # https://syslint.com/blog/tutorial/zimbra-server-migration-and-zimbra-account-transfer-the-perfect-method/
+# Another good article: https://imanudin.net/2015/01/29/how-to-restore-zimbra-mailbox/
+# And https://gist.github.com/filippo/c2e35aedd1f5de729b3b
 
 #
 # while testing this script and/or a mail server
@@ -33,13 +35,14 @@ lastName=$(grep displayName: $recoveryUser-name.txt | sed -e "s/^ *//" | cut -d\
 displayName=$(grep displayName: $recoveryUser-name.txt | cut -d\  -f2-)
 [ "$displayName" ] || displayName=$login
 
-echo zmprov ca $recoveryUser CHANGEme cn "$givenName" displayName "$displayName" firstName "$givenName"
 
 # 
 # Create user, restore password
 #
-zmprov ca $recoveryUser CHANGEme cn "$givenName" displayName "$displayName" givenName "$givenName"
+echo zmprov ca $recoveryUser CHANGEme cn \"$displaynName\" displayName \"$displayName\" givenName \"$givenName\"  zimbraPrefFromDisplay \"$displayName\" sn \"$lastName\"
+zmprov ca $recoveryUser CHANGEme cn "$displaynName" displayName "$displayName" givenName "$givenName"  zimbraPrefFromDisplay "$displayName" sn "$lastName"
 zmprov ma $recoveryUser userPassword $(cat $recoveryUser-password)
+
 
 #
 # Copy mail into user's account
@@ -80,6 +83,22 @@ echo Not recovering email
   zmprov ma  $recoveryUser zimbraMailSieveScript  "$(cat $recoveryUser-filters)"
 } || {
   echo $recoveryUser does not have filters
+}
+
+[ -f ${recoveryUser}-outgoingSieve ] && {
+  echo zmprov ma  $recoveryUser zimbraMailOutgoingSieveScript 
+  zmprov ma  $recoveryUser zimbraMailOutgoingSieveScript  "$(cat $recoveryUser-filters)"
+} || {
+  echo $recoveryUser does not have filters
+}
+
+# 
+# Trusted Senders
+#
+[ -f ${recoveryUser}-trustedSenders ] &&  {
+  for t in $(cat ${recoveryUser}-trustedSenders); do
+    zmprov ma $recoveryUser +zimbraPrefMailTrustedSenderList $t
+  done
 }
 
 

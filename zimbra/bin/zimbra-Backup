@@ -1,6 +1,7 @@
 #!/bin/bash
 # source: salt://sls/zimbra/bin/zimbraBackup
 # https://syslint.com/blog/tutorial/zimbra-server-migration-and-zimbra-account-transfer-the-perfect-method/
+# Another good article: https://imanudin.net/2015/01/24/zimbra-tips-how-to-backup-mailbox-daily-weekly-and-monthly/
 
 
 backupDir=$1
@@ -25,7 +26,7 @@ dumpMail () {
 cd $backupDir
 
 su zimbra -c "zmprov -l gaa" | grep -Ev "spam|virus|ham|galsyn" | tee emails.txt
-for u in $(cat emails.txt); do dumpMail $u & done
+#for u in $(cat emails.txt); do dumpMail $u & done
 
 su zimbra -c "zmprov gad" | tee domains.txt
 su zimbra -c "zmprov gaaa" | tee admins.txt
@@ -36,23 +37,35 @@ for i in $(cat distlist.txt); do
   zmprov gdlm $i | tee dl-members-$i.txt 
 done
 
-for u in $(cat emails.txt); do su zimbra -c "zmprov  -l ga $u userPassword" | grep Password | cut -d" " -f2 | tee $u-password; done
-for u in $(cat emails.txt); do su zimbra -c "zmprov ga $u | grep -i Name:" | tee $u-name.txt; done
-for u in $(cat emails.txt); do su zimbra -c "zmprov ga $u | grep zimbraMailAlias" | tee $u-alias.txt; done
-find . -name \*alias.txt -size 0 | xargs rm -f
+for u in $(cat emails.txt); do 
+  su zimbra -c "zmprov  -l ga $u userPassword" | grep Password | cut -d" " -f2 | tee $u-password; 
+  su zimbra -c "zmprov ga $u | grep -v userPassword" | tee $u-attr.txt; 
+  dumpMail $u
 
-# This command seems poorly done in the source document.
-# There is some sed-ery that needs doing...
-# Also, I don't seem to have my signatures done correctly... so they aren't saved and don't show up here.
-for u in $(cat emails.txt ); do su zimbra -c "zmprov ga $u zimbraPrefMailSignatureHTML" | tee $u-HTMLsignature; done
-for u in $(cat emails.txt ); do su zimbra -c "zmprov ga $u zimbraSignatureName " | tee $u-signature; done
-
-for u in $(cat emails.txt ); do 
-for u in milton@calnek.com; do 
   echo  zmprov ga $u zimbraMailSieveScript 
   su zimbra -c "zmprov ga $u zimbraMailSieveScript  " \
   | sed -e "1d; s/zimbraMailSieveScript: //;" \
   | tee $u-filters
+
+  echo  zmprov ga $u zimbraMailOutgoingSieveScript 
+  su zimbra -c "zmprov ga $u zimbraMailOutgoingSieveScript  " \
+  | sed -e "1d; s/zimbraMailOutgoingSieveScript: //;" \
+  | tee $u-outgoingSieve
+
+  su zimbra -c "zmprov ga $u | grep zimbraMailAlias" | tee $u-alias.txt;
+  su zimbra -c "zmprov ga $u zimbraPrefMailSignature" | tee $u-signature; 
+  su zimbra -c "zmprov ga $u zimbraPrefMailTrustedSenderList" | tee $u-trustedSenders; 
+
+# This command seems poorly done in the source document.
+# There is some sed-ery that needs doing...
+# Also, I don't seem to have my signatures done correctly... so they aren't saved and don't show up here.
+  #su zimbra -c "zmprov ga $u zimbraPrefMailSignatureHTML" | tee $u-HTMLsignature;
+  #su zimbra -c "zmprov ga $u zimbraSignatureName " | tee $u-signature; 
+done
+#find . -name \*alias.txt -size 0 | xargs rm -f
+
+
+for u in $(cat emails.txt ); do 
 done
 
 
