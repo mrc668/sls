@@ -1,0 +1,87 @@
+#!/bin/bash
+# source: salt://sls/zimbra/bin/zimbra-Restore-User
+# https://syslint.com/blog/tutorial/zimbra-server-migration-and-zimbra-account-transfer-the-perfect-method/
+
+#
+# while testing this script and/or a mail server
+# su zimbra -c "zmprov da milton@calnek.com"
+#
+
+
+backupDir=$1
+[ "$backupDir" ] || { 
+  echo Usage: $0 backupDir user@domain
+  exit
+}
+
+recoveryUser=$2
+[ "$recoveryUser" ] || { 
+  echo Usage: $0 backupDir user@domain
+  exit
+}
+
+cd $backupDir
+
+login=$(echo $recoveryUser | sed -e "s/@.*$//")
+
+givenName=$(grep givenName: $recoveryUser-name.txt | sed -e "s/^ *//")
+[ "$givenName" ] || givenName=$login
+
+lastName=$(grep displayName: $recoveryUser-name.txt | sed -e "s/^ *//" | cut -d\   -f 3-)
+[ "$lastName" ] || lastName=$login
+
+displayName=$(grep displayName: $recoveryUser-name.txt | cut -d\  -f2-)
+[ "$displayName" ] || displayName=$login
+
+echo zmprov ca $recoveryUser CHANGEme cn "$givenName" displayName "$displayName" firstName "$givenName"
+
+# 
+# Create user, restore password
+#
+zmprov ca $recoveryUser CHANGEme cn "$givenName" displayName "$displayName" givenName "$givenName"
+zmprov ma $recoveryUser userPassword $(cat $recoveryUser-password)
+
+#
+# Copy mail into user's account
+#
+#echo zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+#zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+#echo finished $recoveryUser
+echo Not recovering email
+
+#
+# Recover aliases
+#
+[ -f  ${recoveryUser}-alias.txt ] && {
+  cat ${recoveryUser}-alias.txt | while read gar alname; do
+    echo  $recoveryUser has alias $alname
+    zmprov aaa $recoveryUser $alname
+    echo  $recoveryUser has alias $alname --- restored
+  done
+}
+
+#
+# Recover Signatures
+#
+#zmprov ma $i zimbraSignatureName "`cat signatures/$i.name`";
+#zmprov ma $i zimbraPrefMailSignatureHTML "`cat signatures/$i.signature`";
+#zmprov ga $i zimbraSignatureId > /tmp/firmaid; sed -i -e "1d" /tmp/firmaid;
+#firmaid=`sed 's/zimbraSignatureId: //g' /tmp/firmaid`;
+#zmprov ma $i zimbraPrefDefaultSignatureId "$firmaid";
+#zmprov ma $i zimbraPrefForwardReplySignatureId "$firmaid";
+#rm -rf /tmp/firmaid;
+#echo $i "done!";
+
+#
+# Recover filters
+#
+[ -f ${recoveryUser}-filters ] && {
+  echo zmprov ma  $recoveryUser zimbraMailSieveScript 
+  zmprov ma  $recoveryUser zimbraMailSieveScript  "$(cat $recoveryUser-filters)"
+} || {
+  echo $recoveryUser does not have filters
+}
+
+
+
+

@@ -12,11 +12,18 @@ zimbra.dependancies:
       - perl
       - libaio
       - nmap-ncat
+      - bash-completion
+      - vim-enhanced
+      - curl
+      - telnet
+      - libstdc++
+      - bind-utils 
 
 zimbra.scripts:
   file.recurse:
     - name: /usr/local/sbin
     - source: salt://sls/zimbra/bin
+    - exclude_pat: .*.swp
     - user: root
     - group: root
     - dir_mode: 755

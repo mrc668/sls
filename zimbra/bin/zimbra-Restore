@@ -1,0 +1,56 @@
+#!/bin/bash
+# source: salt://sls/zimbra/bin/zimbra-Restore
+# https://syslint.com/blog/tutorial/zimbra-server-migration-and-zimbra-account-transfer-the-perfect-method/
+
+
+backupDir=$1
+[ "$backupDir" ] || { 
+  echo Usage: $0 backupDir
+  exit
+}
+
+cd $backupDir
+
+for d in $(cat domains.txt); do
+  echo Creating $d 
+  su zimbra -c "zmprov cd $d zimbraAuthMech zimbra"
+done
+
+su zimbra -c "zmprov gad" | tee domains-check.txt
+md5sum domains.txt domains-check.txt
+
+for u in $(cat emails.txt); do
+done
+
+
+
+
+su zimbra -c "zmprov gaaa" | tee admins.txt
+su zimbra -c "zmprov -l gadl" | tee distlist.txt
+
+for i in $(cat distlist.txt); do 
+  echo "$i"
+  zmprov gdlm $i | tee dl-members-$i.txt 
+done
+
+
+for u in $(cat emails.txt); do su zimbra -c "zmprov  -l ga $u userPassword" | grep Password | cut -d" " -f2 | tee $u-password; done
+for u in $(cat emails.txt); do su zimbra -c "zmprov ga $u | grep -i Name:" | tee $u-name.txt; done
+for u in $(cat emails.txt); do su zimbra -c "zmprov ga $u | grep zimbraMailAlias" | tee $u-alias.txt; done
+find . -name \*alias.txt -size 0 | xargs rm -f
+
+# This command seems poorly done in the source document.
+# There is some sed-ery that needs doing...
+# Also, I don't seem to have my signatures done correctly... so they aren't saved and don't show up here.
+for u in $(cat emails.txt ); do su zimbra -c "zmprov ga $u zimbraPrefMailSignatureHTML" | tee $u-HTMLsignature; done
+for u in $(cat emails.txt ); do su zimbra -c "zmprov ga $u zimbraSignatureName " | tee $u-signature; done
+
+for u in $(cat emails.txt ); do 
+for u in milton@calnek.com; do 
+  echo  zmprov ga $u zimbraMailSieveScript 
+  su zimbra -c "zmprov ga $u zimbraMailSieveScript  " \
+  | sed -e "1d; s/zimbraMailSieveScript: //;" \
+  | tee $u-filters
+done
+
+
