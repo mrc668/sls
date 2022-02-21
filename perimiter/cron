@@ -2,4 +2,5 @@
 12 3 * * * root /usr/local/sbin/updateSpamhaus > /dev/shm/updateSpamhaus.log 2>&1
 12 5 * * * root /usr/local/sbin/badactors.sh > /dev/shm/badactors.log 2>&1
 */10 * * * * root /usr/local/sbin/updateISCblocks > /var/log/updateISCblocks.log
+12 7 * * * root /usr/local/sbin/dan.tor > /var/log/dan.tor.log 2>&1
 

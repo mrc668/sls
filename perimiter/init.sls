@@ -31,3 +31,9 @@ uls_perimeter:
     - group: root
     - file_mode: 755
 
+isc.sans.edu:
+  host.present:
+    - ip: 45.60.31.34
+    - names:
+      - isc.sans.edu
+

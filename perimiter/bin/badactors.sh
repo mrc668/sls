@@ -54,5 +54,5 @@ ipset list newlist | head | grep entries
 ipset list | grep Name:.bad -q || ipset create badactors hash:net comment
 ipset swap newlist badactors
 ipset destroy newlist
-
+ipset save badactors
 
