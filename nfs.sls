@@ -4,8 +4,16 @@ nfs.server:
     - name: nfs-utils
   service.running:
     - enable: true
+    - name: nfs-server
     - watch:
       - file: /etc/exports
+
+rpcbind:
+  pkg:
+    - installed
+  service.running:
+    - enable: true
+    - name: rpcbind
 
 /etc/exports:
   file.managed:
