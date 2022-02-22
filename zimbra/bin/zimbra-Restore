@@ -10,6 +10,7 @@ backupDir=$1
 }
 
 cd $backupDir
+date > recovery-op-start
 
 for d in $(cat domains.txt); do
   echo Creating $d 
@@ -17,40 +18,21 @@ for d in $(cat domains.txt); do
 done
 
 su zimbra -c "zmprov gad" | tee domains-check.txt
-md5sum domains.txt domains-check.txt
+#md5sum domains.txt domains-check.txt
 
+# Restore users
 for u in $(cat emails.txt); do
+  /usr/local/sbin/zimbra-Restore-User $(pwd) $u
 done
 
+# Distribution lists
 
-
-
-su zimbra -c "zmprov gaaa" | tee admins.txt
-su zimbra -c "zmprov -l gadl" | tee distlist.txt
-
-for i in $(cat distlist.txt); do 
-  echo "$i"
-  zmprov gdlm $i | tee dl-members-$i.txt 
+for dl in $(cat distlist.txt); do
+  echo zmprov cdl $dl
+  su zimbra -c "zmprov cdl $dl"
+  for m in $(cat dl-members-$dl.txt); do
+    zmprov adlm $dl $m
+  done
 done
-
-
-for u in $(cat emails.txt); do su zimbra -c "zmprov  -l ga $u userPassword" | grep Password | cut -d" " -f2 | tee $u-password; done
-for u in $(cat emails.txt); do su zimbra -c "zmprov ga $u | grep -i Name:" | tee $u-name.txt; done
-for u in $(cat emails.txt); do su zimbra -c "zmprov ga $u | grep zimbraMailAlias" | tee $u-alias.txt; done
-find . -name \*alias.txt -size 0 | xargs rm -f
-
-# This command seems poorly done in the source document.
-# There is some sed-ery that needs doing...
-# Also, I don't seem to have my signatures done correctly... so they aren't saved and don't show up here.
-for u in $(cat emails.txt ); do su zimbra -c "zmprov ga $u zimbraPrefMailSignatureHTML" | tee $u-HTMLsignature; done
-for u in $(cat emails.txt ); do su zimbra -c "zmprov ga $u zimbraSignatureName " | tee $u-signature; done
-
-for u in $(cat emails.txt ); do 
-for u in milton@calnek.com; do 
-  echo  zmprov ga $u zimbraMailSieveScript 
-  su zimbra -c "zmprov ga $u zimbraMailSieveScript  " \
-  | sed -e "1d; s/zimbraMailSieveScript: //;" \
-  | tee $u-filters
-done
-
+date > recovery-op-end
 

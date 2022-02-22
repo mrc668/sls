@@ -22,6 +22,25 @@ recoveryUser=$2
   exit
 }
 
+zmpwrapper () {
+  myargs=( )
+  [ "$1" ] && myargs+=("$1")
+  [ "$2" ] && myargs+=("$2")
+  [ "$3" ] && myargs+=("$3")
+  [ "$4" ] && myargs+=("$4")
+  [ "$5" ] && myargs+=("$5")
+  [ "$6" ] && myargs+=("$6")
+  [ "$7" ] && myargs+=("$7")
+  [ "$8" ] && myargs+=("$8")
+  echo zmprov $(printf "'%s' " "${myargs[@]}")
+
+  echo zmprov $*
+  su zimbra -c "/opt/zimbra/bin/zmprov $*"
+   $(printf "'%s' " "${myargs[@]}")
+  date
+}
+
+
 cd $backupDir
 
 login=$(echo $recoveryUser | sed -e "s/@.*$//")
@@ -39,18 +58,18 @@ displayName=$(grep displayName: $recoveryUser-name.txt | cut -d\  -f2-)
 # 
 # Create user, restore password
 #
-echo zmprov ca $recoveryUser CHANGEme cn \"$displaynName\" displayName \"$displayName\" givenName \"$givenName\"  zimbraPrefFromDisplay \"$displayName\" sn \"$lastName\"
+echo zmprov ca $recoveryUser CHANGEme cn "$displaynName" displayName "$displayName" givenName "$givenName"  zimbraPrefFromDisplay "$displayName" sn "$lastName"
 zmprov ca $recoveryUser CHANGEme cn "$displaynName" displayName "$displayName" givenName "$givenName"  zimbraPrefFromDisplay "$displayName" sn "$lastName"
-zmprov ma $recoveryUser userPassword $(cat $recoveryUser-password)
+zmpwrapper ma $recoveryUser userPassword $(cat $recoveryUser-password)
 
 
 #
 # Copy mail into user's account
 #
-#echo zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
-#zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
-#echo finished $recoveryUser
-echo Not recovering email
+echo zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+echo $(date) finished $recoveryUser
+#echo Not recovering email
 
 #
 # Recover aliases
@@ -58,7 +77,7 @@ echo Not recovering email
 [ -f  ${recoveryUser}-alias.txt ] && {
   cat ${recoveryUser}-alias.txt | while read gar alname; do
     echo  $recoveryUser has alias $alname
-    zmprov aaa $recoveryUser $alname
+    zmpwrapper aaa $recoveryUser $alname
     echo  $recoveryUser has alias $alname --- restored
   done
 }
@@ -79,15 +98,13 @@ echo Not recovering email
 # Recover filters
 #
 [ -f ${recoveryUser}-filters ] && {
-  echo zmprov ma  $recoveryUser zimbraMailSieveScript 
-  zmprov ma  $recoveryUser zimbraMailSieveScript  "$(cat $recoveryUser-filters)"
+  zmpwrapper ma  $recoveryUser zimbraMailSieveScript  "$(cat $recoveryUser-filters)"
 } || {
   echo $recoveryUser does not have filters
 }
 
 [ -f ${recoveryUser}-outgoingSieve ] && {
-  echo zmprov ma  $recoveryUser zimbraMailOutgoingSieveScript 
-  zmprov ma  $recoveryUser zimbraMailOutgoingSieveScript  "$(cat $recoveryUser-filters)"
+  zmpwrapper ma  $recoveryUser zimbraMailOutgoingSieveScript  "$(cat $recoveryUser-filters)"
 } || {
   echo $recoveryUser does not have filters
 }
@@ -97,7 +114,7 @@ echo Not recovering email
 #
 [ -f ${recoveryUser}-trustedSenders ] &&  {
   for t in $(cat ${recoveryUser}-trustedSenders); do
-    zmprov ma $recoveryUser +zimbraPrefMailTrustedSenderList $t
+    zmpwrapper ma $recoveryUser +zimbraPrefMailTrustedSenderList $t
   done
 }
 
