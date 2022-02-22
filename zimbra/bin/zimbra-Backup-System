@@ -1,0 +1,46 @@
+#!/bin/bash
+
+LOGGER="logger -isp daemon.info -t backup"
+
+$LOGGER Backup started.
+DATE=`date +%F`
+DATEPATH=`date +%F | sed -e "s|-|/|g"`
+. /home/backup/vars
+
+
+# Clean up... just in case
+grep -q $MOUNT_POINT /etc/mtab && umount $MOUNT_POINT 
+/sbin/dmsetup ls | grep -q backup && dmsetup remove backup 
+
+/home/backup/mount || exit
+df -h /mnt/backup | $LOGGER
+PCT=`df -h /mnt/backup | tr -s " " | cut -d" " -f 5 | tail -1 | sed -e "s/%$//"`
+$LOGGER drive space  $PCT
+if [ $PCT -gt 95 ]; then
+	echo You should consider purging old data from the backup drive | mail -s "purge backup drive" root
+	$LOGGER You should consider purging old data from the backup drive 
+fi
+
+for db in $MYSQL; do 
+	mysqldump $db > /home/mysql/dumps/${db}.sql; 
+done
+
+RSyncOptions="-av --stats --delete --delete-delay --backup  --log-file=/var/log/backup.log"
+for i in $BACKUP_DIRS; do
+	$LOGGER "Backing up $i"
+	DIR=$( dirname $i )
+	[ -d $MOUNT_POINT/$DIR ] || mkdir -p $MOUNT_POINT/$DIR
+	BASE=$( basename $i )
+	FULL=$( echo $i | sed -e "s|/|_|g" )
+	$LOGGER "rsync $RSyncOptions  --backup-dir=$MOUNT_POINT/Changed_And_Deleted_Files/$DATEPATH/$DIR $EXCLUDES $i $MOUNT_POINT/$DIR"
+	rsync $RSyncOptions  --backup-dir=$MOUNT_POINT/Changed_And_Deleted_Files/$DATEPATH/$DIR $EXCLUDES $i $MOUNT_POINT/$DIR | $LOGGER
+done
+
+
+# Clean up.
+/home/backup/umount
+$LOGGER Backup complete
+
+
+
+#

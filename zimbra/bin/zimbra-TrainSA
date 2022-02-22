@@ -1,0 +1,14 @@
+#!/bin/bash
+
+ehco Train ham Inbox/ham
+su zimbra -c /opt/zimbra/bin/zmtrainsa milton@calnek.com ham /Inbox/trainham
+
+ehco Train ham EotN/SecurityStuff
+su zimbra -c /opt/zimbra/bin/zmtrainsa milton@calnek.com ham /EotN/SecurityStuff
+
+echo Train spam Inbox/spam
+su zimbra -c /opt/zimbra/bin/zmtrainsa milton@calnek.com spam /Inbox/trainspam
+
+echo Train spam /Junk
+su zimbra -c /opt/zimbra/bin/zmtrainsa milton@calnek.com spam /Junk
+
