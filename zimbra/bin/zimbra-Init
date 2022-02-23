@@ -36,6 +36,7 @@ cd /root
 tar -xzf $(basename $CURRENT)
 
 cd $(find /root -maxdepth 1 -type d -name zcs\* | tail -1)
-./install --platform-override
+echo cd $(pwd)
+echo ./install --platform-override
 
 
