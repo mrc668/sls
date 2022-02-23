@@ -78,6 +78,7 @@ postfix_header_checks:
 postfix_header_checks.run:
   cmd.run:
     - name: /usr/local/sbin/zimbra-LogSubject
+    - runas: zimbra
     - onchanges:
       - file: postfix_header_checks
 

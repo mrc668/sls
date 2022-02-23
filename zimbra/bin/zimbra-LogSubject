@@ -5,3 +5,5 @@
 
 zmprov ms $(hostname -f) zimbraMtaHeaderChecks 'pcre:/opt/zimbra/conf/postfix_header_checks regexp:/opt/zimbra/conf/custom_header_checks'
 zmprov mcf zimbraMtaBlockedExtensionWarnRecipient FALSE
+zmmtactl restart
+
