@@ -1,0 +1,53 @@
+
+--- zmamavisdctl	2022-02-23 07:48:15.853572788 -0600
++++ zmamavisdctl.orig	2022-02-23 07:47:51.588310052 -0600
+@@ -69,11 +69,11 @@
+   fi
+ }
+ 
+-checkrunningmc() {
++checkrunning-mc() {
+   #  Get PID from scanning the proc table.
+   if [ "x$MCPID" = "x" ]; then
+     # PID file is NULL.  Get info from proc table.
+-    MCPID=$(pgrep -u zimbra -f amavis-mc| head -1)
++    MCPID=`/bin/ps axo user,pid,ppid,command | awk '{ if ((($6 ~ /amavis-mc$/) || ($6 ~ /\/opt\/zimbra\/common\/sbin\/amavis-mc$/))) { print $2 } }'`
+   fi
+   # If PID is still not set, then we cannot find any amavisd (master) process.  Assume amavisd is not running.
+   if [ "x$MCPID" = "x" ]; then
+@@ -91,7 +91,7 @@
+ #
+ case "$1" in
+   'start')
+-    checkrunningmc
++    checkrunning-mc
+     echo -n "Starting amavisd-mc..."
+     if [ $MCRUNNING = 1 ]; then
+       echo "amavisd-mc is already running."
+@@ -99,7 +99,7 @@
+       if [ $MCRUNNING = 0 ]; then
+         sudo /opt/zimbra/common/sbin/amavis-mc
+         for ((i=0; i < 30; i++)); do
+-          checkrunningmc
++          checkrunning-mc
+           if [ $MCRUNNING = 1 ]; then 
+             break
+           fi  
+@@ -176,7 +176,7 @@
+         exit 1
+       fi
+     fi
+-    checkrunningmc
++    checkrunning-mc
+     echo -n "Stopping amavisd-mc..."
+     if [ $MCRUNNING = 0 ]; then
+       echo "amavisd-mc is not running."
+@@ -214,7 +214,7 @@
+     else
+       echo "running."
+     fi
+-    checkrunningmc
++    checkrunning-mc
+     echo -n "amavisd-mc is "
+     if [ $MCRUNNING = 0 ]; then
+       echo "not running."

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+[ -f /opt/zimbra/bin/zmamavisdctl ] || exit -1
+[ -f /opt/zimbra/docs/zmamavisdctl.patch ] || exit -2
+grep checkrunning-mc /opt/zimbra/bin/zmamavisdctl -q || exit 0
+
+echo Patching
+patch /opt/zimbra/bin/zmamavisdctl /opt/zimbra/docs/zmamavisdctl.patch
+
