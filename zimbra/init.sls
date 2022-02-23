@@ -67,12 +67,18 @@ zmamavisdctl.patch.run:
     - name: /usr/local/sbin/zimbra-patch-zmamavisctl
     - cwd: /
 
-/etc/sudoers.d/zabbixZimbra:
+postfix_header_checks:
   file.managed:
-    - source: salt://sls/zimbra/sudo
-    - user: root
-    - group: root
-    - mode: 440
+    - name: /opt/zimbra/conf/custom_header_check
+    - source: salt://sls/zimbra/postfix_header_checks
+    - user: zimbra
+    - group: zimbra
+    - mode: 644
 
-# A warning for external emails.
+postfix_header_checks.run:
+  cmd.run:
+    - name: /usr/local/sbin/zimbra-LogSubject
+    - onchanges:
+      - file: postfix_header_checks
+
 
