@@ -45,7 +45,7 @@ cd $backupDir
 
 login=$(echo $recoveryUser | sed -e "s/@.*$//")
 
-givenName=$(grep givenName: $recoveryUser-name.txt | sed -e "s/^ *//")
+givenName=$(grep givenName: $recoveryUser-name.txt | sed -e "s/^.*givenName: //")
 [ "$givenName" ] || givenName=$login
 
 lastName=$(grep displayName: $recoveryUser-name.txt | sed -e "s/^ *//" | cut -d\   -f 3-)
