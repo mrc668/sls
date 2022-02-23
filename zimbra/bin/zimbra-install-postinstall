@@ -1,4 +1,7 @@
 #!/bin/bash
 
-yum -y install zimbra-patch
+yum -y install zimbra-patch zimbra-zeromq
+
+
 /opt/zimbra/libexec/zmfixperms -e -v 
+
