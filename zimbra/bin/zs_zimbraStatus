@@ -1,0 +1,12 @@
+#!/bin/bash
+# source salt://sls/zimbra/bin/zg_zimbraStatus
+
+server=$(grep Server= /etc/zabbix/zabbix_agentd.conf | cut -d= -f2)
+
+count=$(/etc/rc.d/init.d/zimbra status | grep -v Running | wc -l)
+((count-=1))
+
+/usr/bin/zabbix_sender -z $server -s $(hostname -s) -k zimbra.status -o  "$count"
+#echo $count
+#exit $count
+
