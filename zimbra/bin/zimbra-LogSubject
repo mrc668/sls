@@ -1,0 +1,12 @@
+#!/bin/bash
+# source salt://sls/zimbra/bin/zimbra-LogSubject
+# from: https://forums.zimbra.org/viewtopic.php?t=5522
+# from: https://forums.zimbra.org/viewtopic.php?t=68303
+
+cat <<!  > /opt/zimbra/conf/custom_header_check
+/^subject:/ WARN
+/filename=\"?(.*)\"?$/ WARN Document Attachment :
+!
+
+zmprov ms $(hostname) zimbraMtaHeaderChecks 'pcre:/opt/zimbra/conf/postfix_header_checks regexp:/opt/zimbra/conf/custom_header_checks'
+zmprov mcf zimbraMtaBlockedExtensionWarnRecipient FALSE
