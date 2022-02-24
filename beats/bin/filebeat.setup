@@ -17,9 +17,11 @@ echo /usr/bin/filebeat modules enable $ENABLE | tee -a /dev/shm/filebeat.setup.l
 
 #/usr/bin/filebeat setup --template -E output.logstash.enabled=true -E 'output.elasticsearch.hosts=["10.0.10.8:9200"]' | tee -a /dev/shm/filebeat.setup.log
 #/usr/bin/filebeat setup -e -E output.logstash.enabled=true -E output.elasticsearch.hosts=['10.0.10.8:9200'] -E setup.kibana.host=10.0.10.8:5601 | tee -a /dev/shm/filebeat.setup.log
-
-
+# There is no cli config... it's all in filebeat.yml.
+/usr/bin/filebeat setup  | tee -a /dev/shm/filebeat.setup.log
 
 /usr/bin/filebeat modules list | tee -a /dev/shm/filebeat.setup.log
 rm -f /etc/filebeat/modules.d/*disabled
 
+/usr/bin/filebeat test config  | tee -a /dev/shm/filebeat.setup.log
+/usr/bin/filebeat test output  | tee -a /dev/shm/filebeat.setup.log

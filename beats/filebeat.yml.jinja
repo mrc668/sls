@@ -47,6 +47,10 @@ processors:
   - add_docker_metadata: ~
   - add_kubernetes_metadata: ~
 
+# Should this be elastic search?
+# https://stackoverflow.com/questions/39873791/filebeat-directly-to-els-or-via-logstash
+# logstash can add geoip and do other parsing.
+# Video shows output as ES.
 output.logstash:
   hosts: ["10.0.10.8:5044"]
   ssl.enabled: false

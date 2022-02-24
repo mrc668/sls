@@ -1,0 +1,17 @@
+#!/bin/bash
+
+rpm -q filebeat >/dev/null || {
+  # filebeat is not installed.
+  echo 0
+  exit;
+}
+
+Running=$(pidof /usr/share/filebeat/bin/filebeat)
+[ -z "$Running" ] &&  {
+  # filebeat is not running
+  echo 1
+  exit;
+}
+
+# echo pid of filebeat
+echo $Running
