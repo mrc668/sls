@@ -19,6 +19,7 @@ zimbra.dependancies:
       - libstdc++
       - bind-utils 
       - patch
+      - zabbix-sender
       # I'm not 100% sure these need to be included
       - perl-IO-stringy
       - perl-Unix-Syslog

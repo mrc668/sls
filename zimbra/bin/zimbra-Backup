@@ -20,6 +20,9 @@ dumpMail () {
   box=$1
   echo Starting $box
   su zimbra -c "zmmailbox -z -m $box getRestURL '/?fmt=tgz'" > $box.tgz
+  #zmmailbox -z -m user@`zmhostname` getRestURL "//?fmt=tgz&query="after:2/1/2014 before:3/15/2014 type:message meta=0"" > /tmp/test_export/test_export.tgz
+  #zmmailbox -z -m $account getRestURL "//?fmt=tgz&query="after:2/23/2022"" > $backupDir/$account-2022-02-23.tgz
+
   echo $box completed.
 }
 

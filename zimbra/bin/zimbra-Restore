@@ -18,7 +18,7 @@ for d in $(cat domains.txt); do
 done
 
 su zimbra -c "zmprov gad" | tee domains-check.txt
-#md5sum domains.txt domains-check.txt
+diff domains.txt domains-check.txt
 
 # Restore users
 for u in $(cat emails.txt); do
@@ -34,5 +34,10 @@ for dl in $(cat distlist.txt); do
     zmprov adlm $dl $m
   done
 done
+
+for i in $( cat emails.txt); do
+  [ -f $i.tgz ] && su zimbra -c "/usr/local/sbin/zimbra-Restore-mailbox $(pwd) $i"
+done
+
 date > recovery-op-end
 

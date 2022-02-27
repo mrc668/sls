@@ -1,0 +1,32 @@
+#!/bin/bash
+# source: salt://sls/zimbra/bin/zimbra-Restore-mailbox
+# https://syslint.com/blog/tutorial/zimbra-server-migration-and-zimbra-account-transfer-the-perfect-method/
+# Another good article: https://imanudin.net/2015/01/29/how-to-restore-zimbra-mailbox/
+# And https://gist.github.com/filippo/c2e35aedd1f5de729b3b
+
+#
+# while testing this script and/or a mail server
+# su zimbra -c "zmprov da milton@calnek.com"
+#
+
+
+backupDir=$1
+[ "$backupDir" ] || { 
+  echo Usage: $0 backupDir user@domain
+  exit
+}
+
+recoveryUser=$2
+[ "$recoveryUser" ] || { 
+  echo Usage: $0 backupDir user@domain
+  exit
+}
+
+
+#
+# Copy mail into user's account
+#
+echo zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+echo $(date) finished $recoveryUser
+

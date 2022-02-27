@@ -32,11 +32,11 @@ zmpwrapper () {
   [ "$6" ] && myargs+=("$6")
   [ "$7" ] && myargs+=("$7")
   [ "$8" ] && myargs+=("$8")
-  echo zmprov $(printf "'%s' " "${myargs[@]}")
+  #$(printf "'%s' " "${myargs[@]}")
+  #echo zmprov $(printf "'%s' " "${myargs[@]}")
 
   echo zmprov $*
   su zimbra -c "/opt/zimbra/bin/zmprov $*"
-   $(printf "'%s' " "${myargs[@]}")
   date
 }
 
@@ -45,13 +45,13 @@ cd $backupDir
 
 login=$(echo $recoveryUser | sed -e "s/@.*$//")
 
-givenName=$(grep givenName: $recoveryUser-name.txt | sed -e "s/^.*givenName: //")
+givenName=$(grep givenName: $recoveryUser-attr.txt | sed -e "s/^.*givenName: //")
 [ "$givenName" ] || givenName=$login
 
-lastName=$(grep displayName: $recoveryUser-name.txt | sed -e "s/^ *//" | cut -d\   -f 3-)
+lastName=$(grep displayName: $recoveryUser-attr.txt | sed -e "s/^ *//" | cut -d\   -f 3-)
 [ "$lastName" ] || lastName=$login
 
-displayName=$(grep displayName: $recoveryUser-name.txt | cut -d\  -f2-)
+displayName=$(grep displayName: $recoveryUser-attr.txt | cut -d\  -f2-)
 [ "$displayName" ] || displayName=$login
 
 
@@ -66,10 +66,10 @@ zmpwrapper ma $recoveryUser userPassword $(cat $recoveryUser-password)
 #
 # Copy mail into user's account
 #
-echo zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
-zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
-echo $(date) finished $recoveryUser
-#echo Not recovering email
+#echo zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+#zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+#echo $(date) finished $recoveryUser
+echo Not recovering email
 
 #
 # Recover aliases
@@ -97,16 +97,13 @@ echo $(date) finished $recoveryUser
 #
 # Recover filters
 #
-[ -f ${recoveryUser}-filters ] && {
-  zmpwrapper ma  $recoveryUser zimbraMailSieveScript  "$(cat $recoveryUser-filters)"
-} || {
-  echo $recoveryUser does not have filters
-}
+[ -f ${recoveryUser}-filters ] && { zmprov ma  $recoveryUser zimbraMailSieveScript  "$(cat $recoveryUser-filters)"; } 
+[ -f ${recoveryUser}-filters ] || { echo $recoveryUser does not have incoming filters; }
 
 [ -f ${recoveryUser}-outgoingSieve ] && {
-  zmpwrapper ma  $recoveryUser zimbraMailOutgoingSieveScript  "$(cat $recoveryUser-filters)"
+  zmpwrapper ma  $recoveryUser zimbraMailOutgoingSieveScript  "$(cat $recoveryUser-outgoingSieve)"
 } || {
-  echo $recoveryUser does not have filters
+  echo $recoveryUser does not have outgoing filters
 }
 
 # 
