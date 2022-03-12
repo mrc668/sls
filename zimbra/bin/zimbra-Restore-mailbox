@@ -12,13 +12,19 @@
 
 backupDir=$1
 [ "$backupDir" ] || { 
-  echo Usage: $0 backupDir user@domain
+  echo Usage: $0 backupDir user@domain user.tgz
   exit
 }
 
 recoveryUser=$2
 [ "$recoveryUser" ] || { 
-  echo Usage: $0 backupDir user@domain
+  echo Usage: $0 backupDir user@domain user.tgz
+  exit
+}
+
+recoveryFile=$3
+[ "$recoveryFile" ] || { 
+  echo Usage: $0 backupDir user@domain user.tgz
   exit
 }
 
@@ -26,7 +32,12 @@ recoveryUser=$2
 #
 # Copy mail into user's account
 #
-echo zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
-zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryUser.tgz
+
+#   “skip” ignores duplicates of old items, it’s also the default conflict-resolution.
+#   “modify” changes old items.
+#   “reset” will delete the old subfolder (or entire mailbox if /).
+#   “replace” will delete and re-enter them.
+echo zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" 
+zmmailbox -z -m $recoveryUser postRestURL "/?fmt=tgz&resolve=skip" $recoveryFile
 echo $(date) finished $recoveryUser
 

@@ -5,5 +5,5 @@
 grep checkrunning-mc /opt/zimbra/bin/zmamavisdctl -q || exit 0
 
 echo Patching
-patch /opt/zimbra/bin/zmamavisdctl /opt/zimbra/docs/zmamavisdctl.patch
+patch -R /opt/zimbra/bin/zmamavisdctl /opt/zimbra/docs/zmamavisdctl.patch
 

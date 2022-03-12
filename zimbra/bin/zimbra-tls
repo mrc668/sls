@@ -1,0 +1,29 @@
+#!/bin/bash
+# source: salt://sls/zimbra/bin/zimbra-tls
+#                    ^^^^^^
+
+id | grep zimbra -q || {
+  echo Run as user zimbra
+  exit -1
+}
+
+
+zmprov gcf zimbraReverseProxySSLProtocols | grep TLSv1$ -q && zmprov mcf -zimbraReverseProxySSLProtocols  TLSv1
+zmprov gcf zimbraReverseProxySSLProtocols | grep TLSv1.1 -q && zmprov mcf -zimbraReverseProxySSLProtocols  TLSv1.1
+zmprov gcf zimbraReverseProxySSLProtocols | grep TLSv1.3 -q || {
+  zmprov mcf +zimbraReverseProxySSLProtocols  TLSv1.3
+  zmprov -l mcf zimbraReverseProxySSLCiphers 'ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384'
+  zmproxyctl restart
+}
+
+zmprov gcf zimbraResponseHeader | grep Strict-Transport-Security -q || zmprov mcf +zimbraResponseHeader "Strict-Transport-Security: max-age=31536000; includeSubDomains"
+zmprov gcf zimbraResponseHeader | grep "X-XSS-Protection" -q || zmprov mcf +zimbraResponseHeader "X-XSS-Protection: 1; mode=block"
+zmprov gcf zimbraResponseHeader | grep "X-Content-Type-Options"  -q || zmprov mcf +zimbraResponseHeader "X-Content-Type-Options: nosniff"
+zmprov gcf zimbraResponseHeader | grep "X-Robots-Tag" -q || {
+  zmprov mcf +zimbraResponseHeader "X-Robots-Tag: noindex"
+  zmprov mcf zimbraMailKeepOutWebCrawlers TRUE
+  zmmailboxdctl restart
+}
+
+#grep TLSv1.1 /opt/zimbra/conf/localconfig.xml -q && patch /opt/zimbra/conf/localconfig.xml /opt/zimbra/conf/localconfig.xml.patch
+

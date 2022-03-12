@@ -59,7 +59,7 @@ displayName=$(grep displayName: $recoveryUser-attr.txt | cut -d\  -f2-)
 # Create user, restore password
 #
 echo zmprov ca $recoveryUser CHANGEme cn "$displaynName" displayName "$displayName" givenName "$givenName"  zimbraPrefFromDisplay "$displayName" sn "$lastName"
-zmprov ca $recoveryUser CHANGEme cn "$displaynName" displayName "$displayName" givenName "$givenName"  zimbraPrefFromDisplay "$displayName" sn "$lastName"
+su zimbra -c zmprov ca $recoveryUser CHANGEme cn "$displaynName" displayName "$displayName" givenName "$givenName"  zimbraPrefFromDisplay "$displayName" sn "$lastName"
 zmpwrapper ma $recoveryUser userPassword $(cat $recoveryUser-password)
 
 

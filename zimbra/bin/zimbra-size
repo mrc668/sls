@@ -1,0 +1,20 @@
+#!/bin/bash
+# source: salt://sls/zimbra/bin/zimbra-size
+
+[ $USER = "zimbra" ] || {
+  echo RUn as zimbra. Try
+        echo su zimbra -c $0
+        exit -1
+}
+
+
+FREEM=$(free -m | grep Mem | tr -s " " | cut -d" " -f2)
+mailboxd_java_heap_size=$(($FREEM / 5 ))
+echo zmlocalconfig -e mailboxd_java_heap_size=$mailboxd_java_heap_size
+zmlocalconfig -e mailboxd_java_heap_size=$mailboxd_java_heap_size
+
+/opt/zimbra/libexec/zmmycnf > /tmp/newmycnf.txt
+diff /opt/zimbra/conf/my.cnf /tmp/newmycnf.txt
+rm -f /tmp/newmycnf.txt
+/opt/zimbra/libexec/zmmycnf > /opt/zimbra/conf/my.cnf
+

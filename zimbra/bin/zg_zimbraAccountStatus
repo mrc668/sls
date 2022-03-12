@@ -8,3 +8,5 @@ su zimbra -c "zmprov ga $user zimbraAccountStatus " > /dev/shm/$logFile
 grep Active $logFile -q && echo 0
 grep Locked $logFile -q && echo 1
 
+#rm -f $logFile
+

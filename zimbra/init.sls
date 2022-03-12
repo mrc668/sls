@@ -55,6 +55,14 @@ zimbra.profile:
     - group: root
     - mode: 644
 
+localconfig.patch:
+  file.managed:
+    - name: /opt/zimbra/conf/localconfig.xml.patch
+    - source: salt://sls/zimbra/localconfig.patch
+    - user: zimbra
+    - group: zimbra
+    - mode: 640
+
 zmamavisdctl.patch:
   file.managed:
     - name: /opt/zimbra/docs/zmamavisdctl.patch
@@ -67,6 +75,14 @@ zmamavisdctl.patch.run:
   cmd.run:
     - name: /usr/local/sbin/zimbra-patch-zmamavisctl
     - cwd: /
+
+zimbra.zabix.sudo:
+  file.managed:
+    - name: /etc/sudoers.d/zimbraZabix
+    - source: salt://sls/zimbra/sudo
+    - user: root
+    - group: root
+    - mode: 440
 
 postfix_header_checks:
   file.managed:

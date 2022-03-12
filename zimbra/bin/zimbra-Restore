@@ -41,3 +41,6 @@ done
 
 date > recovery-op-end
 
+for i in milton leigh jenn; do zmprov ma $i@calnek.com zimbraIsAdminAccount TRUE; done
+for i in 24.72.12.215 24.72.12.92; do zmprov ms $(hostname -f) +zimbraMtaMyNetworks $i; done
+

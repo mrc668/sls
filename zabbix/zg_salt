@@ -1,7 +1,0 @@
-#!/bin/bash
-# source salt://pillars/zabbix/zg_salt
-
-/usr/bin/systemctl status salt-minion | grep active..running -q || { echo 1; exit 1; }
-#/usr/bin/salt-call test.ping | grep True -q || { echo 2; exit 2; }
-echo 0; exit
-
