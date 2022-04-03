@@ -1,11 +1,9 @@
-
-docker.dependancies: 
+docker.dependancies:
   pkg.installed:
     - pkgs:
       - podman 
       - buildah 
       - skopeo
-      - podman-dockerA
+      - podman-docker
       - toolbox
-
 
