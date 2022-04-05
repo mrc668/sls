@@ -16,6 +16,7 @@ perimeter.dependancies:
     - pkgs:
       - wget
       - perl
+      - jq
 
 /usr/local/sbin/updateBlackList:
   file.absent
@@ -23,10 +24,14 @@ perimeter.dependancies:
 /usr/local/sbin/clearBlackList:
   file.absent
 
+/usr/local/sbin/.dan.tor:
+  file.absent
+
 uls_perimeter:
   file.recurse:
     - source: salt://sls/perimiter/bin
     - name: /usr/local/sbin
+    - exclude_pat: .*.swp
     - user: root
     - group: root
     - file_mode: 755

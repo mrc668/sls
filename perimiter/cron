@@ -1,4 +1,5 @@
 # source salt://pillars/perimiter/cron
+PATH=/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
 12 3 * * * root /usr/local/sbin/updateSpamhaus > /dev/shm/updateSpamhaus.log 2>&1
 12 5 * * * root /usr/local/sbin/badactors.sh > /dev/shm/badactors.log 2>&1
 */10 * * * * root /usr/local/sbin/updateISCblocks > /var/log/updateISCblocks.log

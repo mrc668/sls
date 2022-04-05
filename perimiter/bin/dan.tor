@@ -1,15 +1,29 @@
 #!/bin/bash
 # source salt://sls/perimeter/bin/dan.tor
 
+PATH=/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+
 curl https://www.dan.me.uk/torlist/ > /dev/shm/dan.tor
 
 ipset list -n | grep dan.tor -q || ipset create dan.tor hash:net comment
+ipset list -n | grep dan.tor -q || {
+  echo Failed to create ipset dan.tor
+  exit -1
+}
+
 
 ipset create dan.new hash:net comment
+ipset list -n | grep dan.new -q || {
+  echo Failed to create ipset dan.new
+  exit -2
+}
+
 grep -v [a-zA-Z:\#] /dev/shm/dan.tor | while read ip; do
+  #echo ipset add dan.new $ip
   ipset add dan.new $ip
 done
 
 ipset swap dan.tor dan.new
 ipset destroy dan.new
 ipset save dan.tor > /etc/sysconfig/ipsets/dan.tor
+

@@ -1,19 +1,39 @@
 #!/bin/bash
 # source salt://pillars/perimiter/updateSpamhaus
 
+PATH=/sbin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+
+SRC=https://www.spamhaus.org/drop/drop.lasso 
+iplist=/dev/shm/spamhaus.new
+ListName=spamhaus
+ListNew="$ListName.new"
+
+curl  $SRC > $iplist
+
+ipset list -n | grep $ListName -q || ipset create $ListName hash:net comment
+ipset list -n | grep $ListName -q || {
+  echo Failed to create ipset $ListName
+  exit -1
+}
+
+
+ipset create $ListNew hash:net comment
+ipset list -n | grep $ListNew -q || {
+  echo Failed to create ipset $ListNew
+  exit -2
+}
+
 cd /dev/shm
 
 DT=$(/usr/bin/date +%F)
-wget www.spamhaus.org/drop/drop.lasso
 
-grep -q SBL drop.lasso || exit
+grep -q SBL $iplist || exit
 
-/usr/sbin/ipset list spamhaus > /dev/null 2>&1 || /usr/sbin/ipset create spamhaus hash:net
-/usr/sbin/ipset flush  spamhaus
-cp /dev/null /etc/sysconfig/ipsets/spamhaus
-
-for i in $( grep SBL drop.lasso | cut -d\; -f1); do 
-	/usr/sbin/ipset add spamhaus $i
-  echo $i >> /etc/sysconfig/ipsets/spamhaus
+for i in $( grep SBL $iplist | cut -d\; -f1); do 
+	/usr/sbin/ipset add $ListNew $i
 done
+
+ipset swap $ListName $ListNew
+ipset destroy $ListNew
+ipset save $ListName > /etc/sysconfig/ipsets/$ListName
 
