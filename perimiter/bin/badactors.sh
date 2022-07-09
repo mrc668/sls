@@ -2,7 +2,7 @@
 
 export PATH=$PATH:/sbin:/usr/sbin
 
-ListName=badactors
+ListName=$( basename $0 | sed -e "s/.sh$//")
 ListNew="$ListName.new"
 
 ipset list -n | grep $ListName -q || ipset create $ListName hash:net comment
@@ -65,6 +65,8 @@ for ip in $(curl -sS 'https://isc.sans.edu/api/intelfeed?json&requestor=milton@c
 done
 ipset list $ListNew | head 
 
-ipset swap $ListName $ListNew
-ipset destroy $ListNew
-ipset save $ListName > /etc/sysconfig/ipsets/$ListName
+ipset list $ListNew > /etc/sysconfig/ipsets/$ListName
+ipset swap $ListName $ListNew && {
+  ipset destroy $ListNew
+  ipset save $ListName > /etc/sysconfig/ipsets/$ListName
+}

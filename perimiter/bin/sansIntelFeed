@@ -1,0 +1,33 @@
+#!/bin/bash
+
+export PATH=$PATH:/sbin:/usr/sbin
+
+urls="https://isc.sans.edu/api/intelfeed?json&requestor=milton@calnek.com"
+#| jq -c '.[] | select ( .ip != null ) | { ip } ' | cut -d\" -f4); do
+
+ListName=$( basename $0 | sed -e "s/.sh$//")
+ListNew="$ListName.new"
+ListTXT="/dev/shm/$ListName"
+
+for u in  $urls ; do
+	echo Getting $u
+	echo curl -SskL $u
+  curl -SskL $u > $ListTXT
+  cat $ListTXT | jq -c '.[] ' | sed -e 's/DShield Ports[^"]*/DShieldPort/; s/ciarmy[^"]*/ciarmy/; s/blocklist[^"]*/blocklist/; s/open[^"]*/open/; s/forum[^"]*/forum/; s/miner[^"]*/miner/; s/alpha[^"]*/alpha/; s/censys[^"]/censys/; s/internet[^"]*/honey/; s/normshield/dshieldPort/;'  | cut -d\" -f4,8 | sed -e "s/\"/ /" | while read ip li; do
+      ipset -exist create si-$li.new hash:net family inet hashsize 1024 maxelem 65536 comment 2>/dev/null
+      ipset -exist create si-$li hash:net family inet hashsize 1024 maxelem 65536 comment 2>/dev/null
+      ipset -exist add si-$li.new $ip comment "2022" || echo Failed on $ip $li
+	done
+done
+
+
+for i in $(ipset list | grep Name.*si- | grep -v new | cut -d: -f2); do
+  ListName=$i
+  ListNew="${i}.new"
+  echo ipset save $ListNew  as $ListName
+  ipset save $ListNew > /etc/sysconfig/ipsets/$ListName
+  ipset swap $ListName $ListNew && {
+    ipset destroy $ListNew
+    ipset save $ListName > /etc/sysconfig/ipsets/$ListName
+  }
+done

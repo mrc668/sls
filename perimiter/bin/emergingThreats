@@ -1,0 +1,39 @@
+#!/bin/bash
+
+export PATH=$PATH:/sbin:/usr/sbin
+
+urls=" http://rules.emergingthreats.net/blockrules/compromised-ips.txt"
+
+ListName=$( basename $0 | sed -e "s/.sh$//")
+ListNew="$ListName.new"
+ListTXT="/dev/shm/$ListName"
+
+ipset list -n | grep $ListName -q || ipset create $ListName hash:net comment
+ipset list -n | grep $ListName -q || {
+  echo Failed to create ipset $ListName
+  exit -1
+}
+
+ipset create $ListNew hash:net comment
+ipset list -n | grep $ListNew -q || {
+  echo Failed to create ipset $ListNew
+  exit -2
+}
+
+for u in  $urls ; do
+	echo Getting $u
+	echo curl -SskL --connect-timeout 3 $u
+  curl -SskL --connect-timeout 3 $u > $ListTXT
+	for i in $(cat $ListTXT | grep [0-9] | grep -Ev "[^0-9\.]" ); do
+      ipset -exist add $ListNew $i comment "$u" || echo Failed on $i
+	done
+	ipset list $ListNew | head | grep entries
+	echo 
+done
+
+
+ipset save $ListNew > /etc/sysconfig/ipsets/$ListName
+ipset swap $ListName $ListNew && {
+  ipset destroy $ListNew
+  ipset save $ListName > /etc/sysconfig/ipsets/$ListName
+}

@@ -1,8 +1,0 @@
-#!/bin/bash
-
-for i in $(/sbin/iptables -nvL BlackList --line-numbers -t raw | grep "0     0" | cut -d" " -f1 | sort -nr ); do 
-	/sbin/iptables -t raw -nvL BlackList --line-numbers | grep "^$i "
-	echo /sbin/iptables -t raw -D BlackList $i ; 
-	/sbin/iptables -t raw -D BlackList $i ; 
-done
-/sbin/iptables -t raw -nvL BlackList -Z | /bin/logger -p daemon.info -t "BlackList counts"
