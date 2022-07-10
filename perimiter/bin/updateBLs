@@ -1,0 +1,17 @@
+#!/bin/bash
+# source salt://salt/sls/perimiter/bin/
+
+#badactors.sh > /var/log/updateLists-badactors.sh.log
+binaryDefense > /var/log/updateLists-binaryDefense.log
+blocklistAll > /var/log/updateLists-blocklistAll.log
+bruteforce > /var/log/updateLists-bruteforce.log
+dan.tor > /var/log/updateLists-dan.tor.log
+#dragonSSH > /var/log/updateLists-dragonSSH.log
+#dragonVNC > /var/log/updateLists-dragonVNC.log
+dshield > /var/log/updateLists-dshield.log
+emergingThreats > /var/log/updateLists-emergingThreats.log
+feodoTracker > /var/log/updateLists-feodoTracker.log
+sansIntelFeed > /var/log/updateLists-sansIntelFeed.log
+#spamSnapper > /var/log/updateLists-spamSnapper.log
+#talosIntell > /var/log/updateLists-talosIntell.log
+updateSpamhaus > /var/log/updateLists-updateSpamhaus.log

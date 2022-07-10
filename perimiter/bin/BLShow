@@ -1,4 +1,5 @@
 #!/bin/bash
+# source salt://salt/sls/perimiter/bin/
 
 for i in BLIn BLOut BLDrop; do 
   iptables -nvL $i; 

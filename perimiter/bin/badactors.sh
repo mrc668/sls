@@ -1,4 +1,5 @@
 #!/bin/bash
+# source salt://salt/sls/perimiter/bin/
 
 export PATH=$PATH:/sbin:/usr/sbin
 

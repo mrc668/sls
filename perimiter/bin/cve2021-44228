@@ -1,4 +1,5 @@
 #!/bin/bash
+# source salt://salt/sls/perimiter/bin/
 
 ipset create cve202144228 hash:net comment
 

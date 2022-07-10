@@ -1,4 +1,5 @@
 #!/bin/bash
+# source salt://salt/sls/perimiter/bin/
 
 ip=$1
 for l in $(ipset list | grep ^Name | cut -d: -f2); do 

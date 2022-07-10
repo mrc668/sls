@@ -1,4 +1,5 @@
 #!/bin/bash
+# source salt://salt/sls/perimiter/bin/
 
 export PATH=$PATH:/sbin:/usr/sbin
 
@@ -7,6 +8,7 @@ urls=" http://www.binarydefense.com/banlist.txt "
 ListName=$( basename $0 | sed -e "s/.sh$//")
 ListNew="$ListName.new"
 ListTXT="/dev/shm/$ListName"
+comment=$(date +%F)
 
 ipset list -n | grep $ListName -q || ipset create $ListName hash:net comment
 ipset list -n | grep $ListName -q || {
@@ -25,7 +27,7 @@ for u in  $urls ; do
 	echo curl -SskL --connect-timeout 3 $u
   curl -SskL --connect-timeout 3 $u > $ListTXT
 	for i in $(cat $ListTXT | grep [0-9] | grep -Ev "[^0-9\.]" ); do
-      ipset -exist add $ListNew $i comment "$u" || echo Failed on $i
+      ipset -exist add $ListNew $i comment "$comment" || echo Failed on $i
 	done
 	ipset list $ListNew | head | grep entries
 	echo 
