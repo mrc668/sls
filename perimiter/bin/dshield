@@ -35,8 +35,6 @@ for u in  $urls ; do
 done
 
 
-ipset save $ListNew > /etc/sysconfig/ipsets/$ListName
-ipset swap $ListName $ListNew && {
-  ipset destroy $ListNew
-  ipset save $ListName > /etc/sysconfig/ipsets/$ListName
-}
+ipset save $ListNew | sed -e "s/\.new / /" > /etc/sysconfig/ipsets/$ListName
+ipset swap $ListName $ListNew && ipset destroy $ListNew
+
