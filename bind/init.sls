@@ -5,21 +5,37 @@ named:
     - installed
   service.running:
     - enable: true
-    - named: named
+    - name: named
     - watch:
       - file: /etc/named.conf
 
-/etc/named:
+/var/named:
+  file.directory:
+    - user: root
+    - group: named
+    - mode: 1770
+
+/var/log/named:
+  file.directory:
+    - user: named
+    - group: named
+    - mode: 770
+
+named.standard:
   file.recurse:
-    - source: salt://pillars/bind/named
+    - source: salt://sls/bind/named
+    - name: /etc/named
+    - exclude_pat: .*.swp
     - user: named
     - group: named
     - dir_mode: 750
     - file_mode: 640
 
-/etc/named.local:
+named.local:
   file.recurse:
     - source: salt://personality/{{ grains['nodename']}}/named
+    - name: /etc/named
+    - exclude_pat: .*.swp
     - user: named
     - group: named
     - dir_mode: 750
@@ -30,14 +46,14 @@ named:
     - source: salt://personality/{{ grains['nodename']}}/named.conf
     - user: named
     - group: named
-    - file: 640
+    - mode: 640
 
 /etc/sysconfig/named:
   file.managed:
     - source: salt://personality/{{ grains['nodename']}}/named.vars
     - user: named
     - group: named
-    - file: 644
+    - mode: 644
 
 /usr/sbin/named-checkconf -z /etc/named.conf:
   cmd.run:
