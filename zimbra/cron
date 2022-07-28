@@ -1,0 +1,4 @@
+7 3 * * * root /usr/local/sbin/zimbra-Backup-rsync > /var/log/zimbra-backup-rsync.log 2>&1
+13 7,12,17 * * * root /usr/local/sbin/zimbra-Backup /opt/recovery > /var/log/zimbra-backup.log 2>&1
+
+

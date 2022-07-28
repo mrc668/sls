@@ -1,0 +1,6 @@
+# Source salt://sls/zimbra/sudo
+
+Defaults:zabbix !requiretty
+Defaults  lecture="never"
+zabbix	ALL = NOPASSWD: /usr/local/sbin/zg_zimbraAccountStatus
+

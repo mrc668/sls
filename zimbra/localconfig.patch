@@ -1,0 +1,11 @@
+--- /opt/zimbra/conf/localconfig.xml    2022-02-25 13:32:10.009811239 -0600
++++ /opt/zimbra/conf/localconfig.xml.new        2022-03-01 21:17:45.708474142 -0600
+@@ -101,7 +101,7 @@
+     <value>zcs.calnek.com</value>
+   </key>
+   <key name="zimbra_zmjava_options">
+-    <value>-Xmx256m -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2 -Djdk.tls.client.protocols=TLSv1,TLSv1.1,TLSv1.2 -Djava.net.preferIPv4Stack=true</value>
++    <value>-Xmx256m -Dhttps.protocols=TLSv1.2,TLSv1.3 -Djdk.tls.client.protocols=TLSv1.2,TLSv1.3 -Djava.net.preferIPv4Stack=true</value>
+   </key>
+   <key name="smtp_destination">
+     <value>admin@zcs.calnek.com</value>

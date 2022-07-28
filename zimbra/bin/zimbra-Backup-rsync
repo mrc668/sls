@@ -1,0 +1,10 @@
+#!/bin/bash
+# source: salt://sls/zimbra/bin/zimbra-Backup-rsync
+
+/etc/init.d/zimbra stop
+RSyncOptions="-av --stats --delete --delete-delay --backup  --log-file=/var/log/backup.log"
+for i in /etc /opt/zimbra /opt/recovery ; do
+  rsync $RSyncOptions -e ssh root@backup $i /data/ZCS-8.8.15
+done
+/etc/init.d/zimbra start
+

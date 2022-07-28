@@ -1,0 +1,6 @@
+#!/bin/bash
+# source: salt://sls/zimbra/bin/zg_zimbraAccountStatus_wrapper
+#                    ^^^^^^
+
+sudo /usr/local/sbin/zg_zimbraAccountStatus
+

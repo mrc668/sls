@@ -28,6 +28,7 @@ zimbra.dependancies:
       - perl-Net-Server
       - perl-ZMQ-Constants
       - gcc
+      - rsync
 
 zimbra.scripts:
   file.recurse:
@@ -99,4 +100,11 @@ postfix_header_checks.run:
     - onchanges:
       - file: postfix_header_checks
 
+zimbra.cron:
+  file.managed:
+    - name: /etc/cron.d/zimbra.backup
+    - source: salt://sls/zimbra/cron
+    - user: root
+    - group: root
+    - mode: 440
 
