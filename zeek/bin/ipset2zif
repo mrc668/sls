@@ -1,0 +1,16 @@
+#!/bin/bash
+
+ListName=$1
+[ "$ListName" ] || { echo Useage: $0 List-name; exit -1; }
+
+header='#fields indicator       indicator_type  meta.source     meta.do_notice  meta.desc'
+printf "%s\n" "$header"
+
+# meta.do_notice -> logs to notice log.
+# there is no switch for intel log
+
+
+ipset list $ListName | sed -n '/Members/,$p' | sed -e "/Members/d; s/comment//;" | while read ip comment; do 
+  printf "%s\tIntel::ADDR\t%s\tF\t%s\n" $ip $ListName $comment
+done
+

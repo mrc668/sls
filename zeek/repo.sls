@@ -42,7 +42,11 @@ uls_zeek:
   file.recurse:
     - source: salt://sls/zeek/bin
     - name: /usr/local/sbin
+    - exclude_pat: .*.swp
     - user: root
     - group: root
     - file_mode: 755
+
+/usr/local/sbin/ipset2zip:
+  file.absent
 
