@@ -40,12 +40,8 @@ selfCheck.dependancies:
       #- alsa-tools
       - alsa-utils
       - ethtool
-      - speedtest-cli
 
 # Maybe run this one by hand
 #/sbin/alsactl init:
 #  cmd.run
  
-/usr/local/sbin/speedtest-cli:
-  file.absent
-
