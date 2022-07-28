@@ -60,18 +60,11 @@ uls_zg:
     - file_mode: 755
 
 /etc/zabbix/eotn.d:
-  file.directory:
-    - user: zabbix
-    - group: zabbix
-    - mode: 755
-
-local.zabbix.config:
   file.recurse:
-    - source: salt://personality/{{grains['nodename']}}/zabbix.eotn.conf
     - name: /etc/zabbix/eotn.d
+    - source: salt://personality/{{grains['nodename']}}/zabbix.eotn.conf
     - user: zabbix
     - group: zabbix
+    - dir_mode: 755
     - file_mode: 644
-
-
 
