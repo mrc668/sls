@@ -25,13 +25,5 @@ doTheWork() {
   }
 }
 
-uname -n | grep zcs -q && doTheWork
-uname -n | grep netops -q && doTheWork
-uname -n | grep devil -q && doTheWork
-uname -n | grep rosco -q && doTheWork
-uname -n | grep pihole -q && doTheWork
-uname -n | grep backup -q && doTheWork
-uname -n | grep zeek -q && doTheWork
-uname -n | grep siege -q && doTheWork
-uname -n | grep unibase -q && doTheWork
+doTheWork
 

@@ -1,3 +1,11 @@
+saltMaster.dependancies:
+  pkg.installed:
+    - pkgs:
+      - yamllint
+      - git
+      - patch
+      - diffutils
+
 /etc/cron.d/saltMastercron:
   file.managed:
     - source: salt://sls/salt/master/saltMastercron
