@@ -2,6 +2,7 @@ docker.dependancies:
   pkg.installed:
     - pkgs:
       - podman 
+      - podman-compose
       - buildah 
       - skopeo
       - podman-docker
@@ -10,11 +11,10 @@ docker.dependancies:
       - wget
       - netcat
       - telnet
+      - nmap
       - yamllint
       - jq
-      - python3 
       - python3-pip
-      - python3-devel
 
 podman.socket:
   service.running:
