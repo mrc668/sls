@@ -1,0 +1,8 @@
+--- t	2022-07-09 17:58:52.411712292 -0600
++++ t1	2022-07-09 18:00:47.452872122 -0600
+@@ -1,4 +1,5 @@
+ #!/bin/bash
++# source salt://salt/sls/perimiter/bin/
+ 
+ ListName=$( basename $0 | sed -e "s/.sh$//")
+ ListNew="$ListName.new"

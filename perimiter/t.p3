@@ -1,0 +1,16 @@
+diff --git a/sls/perimiter/bin/binaryDefense b/sls/perimiter/bin/binaryDefense
+index 4e06500..8f3ec97 100644
+--- a/sls/perimiter/bin/binaryDefense
++++ b/sls/perimiter/bin/binaryDefense
+@@ -34,8 +34,6 @@ for u in  $urls ; do
+ done
+ 
+ 
+-ipset save $ListNew > /etc/sysconfig/ipsets/$ListName
+-ipset swap $ListName $ListNew && {
+-  ipset destroy $ListNew
+-  ipset save $ListName > /etc/sysconfig/ipsets/$ListName
+-}
++ipset save $ListNew | sed -e "s/\.new / /" > /etc/sysconfig/ipsets/$ListName
++ipset swap $ListName $ListNew && ipset destroy $ListNew
++
