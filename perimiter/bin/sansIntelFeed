@@ -9,6 +9,7 @@ urls="https://isc.sans.edu/api/intelfeed?json&requestor=milton@calnek.com"
 ListName=$( basename $0 | sed -e "s/.sh$//")
 ListNew="$ListName.new"
 ListTXT="/dev/shm/$ListName"
+comment=$(date +%F)
 
 for u in  $urls ; do
 	echo Getting $u
@@ -17,7 +18,7 @@ for u in  $urls ; do
   cat $ListTXT | jq -c '.[] ' | sed -e 's/DShield Ports[^"]*/DShieldPort/; s/ciarmy[^"]*/ciarmy/; s/blocklist[^"]*/blocklist/; s/open[^"]*/open/; s/forum[^"]*/forum/; s/miner[^"]*/miner/; s/alpha[^"]*/alpha/; s/censys[^"]/censys/; s/internet[^"]*/honey/; s/normshield/dshieldPort/;'  | cut -d\" -f4,8 | sed -e "s/\"/ /" | while read ip li; do
       ipset -exist create si-$li.new hash:net family inet hashsize 1024 maxelem 65536 comment 2>/dev/null
       ipset -exist create si-$li hash:net family inet hashsize 1024 maxelem 65536 comment 2>/dev/null
-      ipset -exist add si-$li.new $ip comment "2022" || echo Failed on $ip $li
+      ipset -exist add si-$li.new $ip comment "$comment" || echo Failed on $ip $li
 	done
 done
 
