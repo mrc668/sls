@@ -1,0 +1,38 @@
+# working files.
+# What are you thinking... you need the keep the working files!!
+#
+
+# patch files
+**.orig
+**.rej
+
+# vim artifacts
+**.swp
+**.kate-swp
+
+# Environment files that may contain sensitive data
+.env
+.powenv
+
+# certificates
+**.cert
+**.key
+**.crt
+**.pem
+
+# tilde files are usually backup files from a text editor
+*~
+
+# Latex files
+
+**.aux
+**.log
+**.out
+**.pdf
+**.toc
+
+# bash files 
+
+.bash_logout
+.bash_profile
+.bashrc
