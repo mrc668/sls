@@ -32,6 +32,7 @@ ipset.dependancies:
 /etc/sysconfig/ipsets:
   file.recurse:
     - source: salt://sls/ipset/ipsets
+    - exclude_pat: .*.swp
     - user: root
     - group: root
     - dir_mode: 755
