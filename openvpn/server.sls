@@ -20,8 +20,8 @@ vpn.scripts:
     - exclude_pat: .*.swp
     - user: openvpn
     - group: openvpn
-    - dir_mode: 700
-    - file_mode: 600
+    - dir_mode: 750
+    - file_mode: 640
 
 #/etc/openvpn/ccd:
 #  file.directory:
@@ -29,9 +29,22 @@ vpn.scripts:
 #    - group: openvpn
 #    - mode: 750
 #
-/usr/bin/systemctl enable openvpn-server@server:
+
+#/usr/bin/systemctl enable openvpn-server@server:
+#  cmd.run:
+#    - cwd: /
+
+/etc/openvpn/server/Makefile:
+  file.managed:
+    - source: salt://sls/openvpn/Makefile
+    - user: openvpn
+    - group: openvpn
+    - mode: 640
+
+openvpnserver.make:
   cmd.run:
     - cwd: /
+    - name: make -f /etc/openvpn/server/Makefile
 
 /usr/bin/systemctl enable openvpn-client@eotn:
   cmd.run:
