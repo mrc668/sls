@@ -1,0 +1,20 @@
+#!/bin/bash
+
+alias mpg123=echo
+source ./selfCheckLib
+
+checkSSL zcs.calnek.com 20
+echo expect: zcs.calnek.com:443 20
+
+checkSSL zcs.calnek.com:465 95
+echo expect: certificate will expire soon.
+
+checkSSL zcs.calnek.com:993 20
+echo expect: zcs.calnek.com:993 20
+
+checkSSL zcs.calnek.com:465 20
+echo expect: zcs.calnek.com:465 20
+
+checkSSL zcs.calnek.com
+echo expect: zcs.calnek.com:443 21
+

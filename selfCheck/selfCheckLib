@@ -1,0 +1,38 @@
+# to be sourced into another file.
+# http://www.fromtexttospeech.com/
+# https://www.naturalreaders.com/online/
+
+logger -p daemon.info -t selfCheck loading selfCheck Library
+LOGGER="logger -p daemon.info -t selfCheck"
+
+
+function checkSSL {
+  # host:port [ threshold ]
+  [ "$2" ] && threshold=$2 || threshold=21
+  testObject=$1
+  echo $testObject | grep : -q || testObject="${testObject}:443"
+
+  endDate=$(date -d "$(openssl s_client -connect $testObject 2>/dev/null < /dev/null| openssl x509 -enddate -noout 2>/dev/null | cut -d= -f2)" +%s )
+  $LOGGER "$testObject certificate ends: " $(date -d @$endDate +%F)
+  now=$(date +%s)
+
+  if [ $endDate -gt $now ]
+  then # cert has no expired
+
+    daysTill=$(( ($endDate - $now) / 86400 ))
+  
+  
+    [ $daysTill -lt $threshold ] && {
+      AllIsWell=1
+      mpg123 /usr/local/mp3/{certificate,$testObject,willExpireSoon}.mp3
+      $LOGGER "certificate for $testObject will expire soon."
+    }
+  else
+    AllIsWell=1
+    mpg123 /usr/local/mp3/{certificate,$testObject,hasExpired}.mp3
+    $LOGGER "certificate for $testObject has expired."
+  fi
+
+
+} # checkSSL
+
