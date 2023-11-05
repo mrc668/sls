@@ -14,6 +14,13 @@
     - mode: 644
 
 
+/usr/local/lib/selfCheck
+  file.managed:
+    - source: salt://sls/selfCheck/selfCheckLib
+    - user: root
+    - group: root
+    - mode: 755
+
 /usr/bin/systemctl enable selfCheck:
   cmd.run
 
