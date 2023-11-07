@@ -16,7 +16,7 @@ vpnUser=$(head -1 $up)
 vpnPass=$(tail -1 $up)
 
 echo $vpnUser:$(echo $vpnPass | md5sum | cut -d" " -f1)
-echo $vpnUser:$(echo $vpnPass | md5sum | cut -d" " -f1) > $passwd
+echo $vpnUser:$(echo $vpnPass | md5sum | cut -d" " -f1) >> $passwd
 
 rm -f $up
 
