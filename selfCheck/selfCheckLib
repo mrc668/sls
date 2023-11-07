@@ -12,7 +12,15 @@ function checkSSL {
   testObject=$1
   echo $testObject | grep : -q || testObject="${testObject}:443"
 
-  endDate=$(date -d "$(openssl s_client -connect $testObject 2>/dev/null < /dev/null| openssl x509 -enddate -noout 2>/dev/null | cut -d= -f2)" +%s )
+  endDate=$(date -d "$(timeout 3 openssl s_client -connect $testObject 2>/dev/null < /dev/null| openssl x509 -enddate -noout 2>/dev/null | cut -d= -f2)" +%s )
+
+  [ "$endDate" ] || {
+    AllIsWell=1
+    mpg123 /usr/local/mp3/{$testObject,isNotResponding}.mp3
+    $LOGGER "$testObject is not responding."
+    return
+  }
+
   $LOGGER "$testObject certificate ends: " $(date -d @$endDate +%F)
   now=$(date +%s)
 
@@ -26,7 +34,10 @@ function checkSSL {
       AllIsWell=1
       mpg123 /usr/local/mp3/{certificate,$testObject,willExpireSoon}.mp3
       $LOGGER "certificate for $testObject will expire soon."
+    } || {
+      $LOGGER "certificate for $testObject is good for now."
     }
+
   else
     AllIsWell=1
     mpg123 /usr/local/mp3/{certificate,$testObject,hasExpired}.mp3

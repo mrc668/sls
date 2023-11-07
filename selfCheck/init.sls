@@ -14,7 +14,7 @@
     - mode: 644
 
 
-/usr/local/lib/selfCheck
+/usr/local/lib/selfCheck:
   file.managed:
     - source: salt://sls/selfCheck/selfCheckLib
     - user: root
