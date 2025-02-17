@@ -1,0 +1,9 @@
+# source: salt:/sls/ntp/chrony.conf
+server 10.0.10.2 iburst
+peer 10.0.10.3 noselect 
+driftfile /var/lib/chrony/drift
+makestep 1.0 3
+rtcsync
+keyfile /etc/chrony.keys
+leapsectz right/UTC
+logdir /var/log/chrony
