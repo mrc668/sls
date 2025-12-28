@@ -1,0 +1,17 @@
+[Unit]
+Description=Firewall helper for Salt Master
+# Ensure network is fully initialized (DHCP finished, IPs assigned)
+After=network-online.target
+Wants=network-online.target
+# This ties the lifecycle to salt-master
+PartOf=salt-master.service
+After=salt-master.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/fw-add-salt-master
+User=root
+
+[Install]
+WantedBy=salt-master.service

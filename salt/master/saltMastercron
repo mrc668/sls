@@ -1,3 +1,3 @@
 # src: salt://sls/salt/master/saltMasterCron
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-*/5 * * * * root /usr/local/sbin/saltMasterStart
+4,9,14,19,24,29,34,39,44,49,54,59 * * * * root /usr/local/sbin/saltMasterStart

@@ -1,5 +1,5 @@
 #!/bin/bash
 
+rsync -a --exclude='.git' --exclude='*.swp' --exclude='.gitignore' /opt/sls/ /opt/salt/sls/
 ps -u salt -f > /dev/null || systemctl start salt-master
-
 

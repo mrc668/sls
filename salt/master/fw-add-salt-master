@@ -1,0 +1,5 @@
+#!/bin/bash
+
+/sbin/iptables -nvL SERVICES | grep 4505 -q || /sbin/iptables -A SERVICES -p tcp --dport 4505 -j ACCEPT
+/sbin/iptables -nvL SERVICES | grep 4506 -q || /sbin/iptables -A SERVICES -p tcp --dport 4506 -j ACCEPT
+
