@@ -1,0 +1,35 @@
+ 1068  2025-12-23 19:58:21 bash --posix ./easyrsa init-pki
+ 1071  2025-12-23 19:58:56 cp /usr/share/easy-rsa/3.0.8/openssl-easyrsa.cnf pki
+ 1072  2025-12-23 19:58:58 cp /usr/share/easy-rsa/3.0.8/openssl-easyrsa.cnf .
+ 1073  2025-12-23 19:59:25 bash --posix ./easyrsa build-ca nopass
+
+ 1074  2025-12-23 19:59:51 bash --posix ./easyrsa gen-req server nopass
+ 1075  2025-12-23 20:00:02 bash --posix  ./easyrsa sign-req server server
+
+ 1076  2025-12-23 20:00:40 bash --posix ./easyrsa gen-req mrcChrombook nopass
+ 1078  2025-12-23 20:02:05 bash --posix  ./easyrsa sign-req client  mrcChrombook
+
+ 1081  2025-12-23 20:02:52 bash --posix ./easyrsa gen-req mrciPhone nopass
+ 1083  2025-12-23 20:03:17 bash --posix  ./easyrsa sign-req client  mrciPhone
+
+ 1085  2025-12-23 20:05:39 bash --posix ./easyrsa gen-req gpagw nopass
+ 1086  2025-12-23 20:05:53 bash --posix  ./easyrsa sign-req client  gpagw
+
+ 1089  2025-12-23 20:07:10 bash --posix ./easyrsa gen-req gpaServer nopass
+ 1090  2025-12-23 20:07:24 bash --posix  ./easyrsa sign-req client  gpaServer
+
+ 1092  2025-12-23 20:10:16 bash --posix ./easyrsa gen-req lrcDisk nopass
+ 1093  2025-12-23 20:10:40 bash --posix  ./easyrsa sign-req client  lrcDisk
+
+ 1095  2025-12-23 20:14:18 bash --posix ./easyrsa gen-dh
+ 1097  2025-12-23 20:14:48 openvpn --genkey --secret ta.key
+
+
+ Summary: 
+ Which files go where?
+ File              Server Location       Client Location
+ ca.crt            /etc/openvpn/server/  Included in .ovpn
+ server.crt/.key   /etc/openvpn/server/  No
+ client1.crt/.key  No                    Included in .ovpn
+ dh.pem            /etc/openvpn/server/  No
+ ta.key            /etc/openvpn/server/  Included in .ovpn

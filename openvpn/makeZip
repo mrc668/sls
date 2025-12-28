@@ -20,6 +20,6 @@ host=$1
 cp ../pki/private/${host}.key eotn.key
 cp ../pki/issued/${host}.crt eotn.crt
 zip  -r ../zip/${host}.zip . -x makeZip
-tar -czvf ../zip/${host}.tgz . --exclude makeZip
+tar -czvf ../zip/${host}.tgz --exclude makeZip . 
 rm -f eotn.key eotn.crt
 
