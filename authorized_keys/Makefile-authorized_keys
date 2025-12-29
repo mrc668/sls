@@ -1,0 +1,30 @@
+# Define the directory and the output file
+SOURCE_DIR := authorized_keys.d
+TARGET := authorized_keys
+
+# Gather all files inside the .d directory as dependencies
+# This ensures that if any single key file changes, the main file is rebuilt
+SOURCES := $(wildcard $(SOURCE_DIR)/*)
+
+# The default 'all' target
+all: $(TARGET)
+
+# The build rule
+$(TARGET): $(SOURCES)
+	@if [ -z "$(SOURCES)" ]; then \
+	  echo "ERROR: No key files found in $(SOURCE_DIR). Aborting."; \
+	  exit 1; \
+	fi
+	@for file in $(SOURCES); do \
+	  if [ ! -s "$$file" ]; then \
+	    echo "ERROR: $$file is empty. Aborting to prevent corrupted $(TARGET)."; \
+	    exit 1; \
+	  fi; \
+	done
+	@cat $(SOURCES) > $(TARGET)
+	@chmod 600 $(TARGET)
+	@chown --reference=. $(TARGET)
+
+# Optional: Clean up the generated file
+clean:
+	rm -f $(TARGET)
