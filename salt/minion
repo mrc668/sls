@@ -3,3 +3,23 @@ acceptance_wait_time: 60
 acceptance_wait_time_max: 0
 ping_interval: 2
 ipv6: False
+
+default_include: minion.d/*.conf
+master: salt
+retry_dns: 30
+retry_dns_count: 3
+master_port: 4506
+user: root
+pidfile: /var/run/salt-minion.pid
+conf_file: /etc/salt/minion
+pki_dir: /etc/salt/pki/minion
+minion_id_lowercase: True
+verify_env: True
+cache_jobs: True
+enable_gpu_grains: False
+mine_functions:
+  test.ping: []
+  network.ip_addrs:
+    interface: eth0
+    cidr: '10.0.0.0/8'
+state_output_diff: True

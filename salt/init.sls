@@ -47,14 +47,6 @@ salt3003:
   file.absent:
     - name: /etc/cron.daily/salt3003.sh
 
-upgrade:
-  file.managed:
-    - name: /etc/cron.daily/saltrepo.sh
-    - source: salt://sls/salt/saltrepo.sh
-    - user: root
-    - group: root
-    - mode: 755
-
 /usr/local/sbin/saltcall:
   file.managed:
     - source: salt://sls/salt/saltcall

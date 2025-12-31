@@ -12,6 +12,7 @@ saltMaster.dependancies:
       - patch
       - diffutils
       - cronie
+      - rsync
 
 /etc/cron.d/saltMastercron:
   file.managed:
@@ -49,5 +50,12 @@ fw-add-salt-master:
     - user: root
     - group: root
     - mode: 750
+
+/etc/salt/master:
+  file.managed:
+    - source: salt://personality/{{ grains['host']}}/master
+    - user: root
+    - group: root
+    - mode: 644
 
 
