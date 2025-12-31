@@ -22,4 +22,5 @@ mine_functions:
   network.ip_addrs:
     interface: eth0
     cidr: '10.0.0.0/8'
-state_output_diff: True
+state_output: full
+state_verbose: True
