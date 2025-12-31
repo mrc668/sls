@@ -18,16 +18,15 @@
   ) 
 %}
 
-{% if grains['ipfwd'] is defined %}
-{% set ipfwd = "1" %}
+# Get the pillar 'is_gateway', default to False if not found
+{% if salt['pillar.get']('is_gateway', False) %}
+  {% set fwd_value = 1 %}
 {% else %}
-{% set ipfwd = "0" %}
+  {% set fwd_value = 0 %}
 {% endif %}
 
-/etc/sysctl.d/forward.conf:
-  file.managed:
-    - source: salt://sls/sysctl/forward.conf{{ipfwd}}
-    - user: root
-    - group: root
-    - mode: 644
+manage_ip_forwarding:
+  sysctl.present:
+    - name: net.ipv4.ip_forward
+    - value: {{ fwd_value }}
 
