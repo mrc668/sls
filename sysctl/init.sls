@@ -1,7 +1,7 @@
 /etc/sysctl.d:
   file.recurse:
     - name: /etc/sysctl.d
-    - source: salt://sls/sysctl/dotd
+    - source: salt://sysctl/dotd
     - user: root
     - group: root
     - dir_mode: 755
