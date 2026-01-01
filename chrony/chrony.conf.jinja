@@ -1,0 +1,11 @@
+# chrony.conf.jinja
+# Managed by SaltStack
+# Location Grain: {{ salt['grains.get']('location', 'unknown') }}
+
+server {{ ntp_server }} iburst
+
+# Standard chrony defaults
+driftfile /var/lib/chrony/drift
+makestep 1.0 3
+rtcsync
+logdir /var/log/chrony

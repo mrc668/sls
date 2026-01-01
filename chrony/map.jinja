@@ -1,0 +1,13 @@
+# map.jinja
+
+{% set location = salt['grains.get']('location', 'default') %}
+
+{% set sync_settings = {
+    'onPrem':  {'server': '10.0.10.2'},
+    'doTor':   {'server': 'doProxy'},
+    'gpa':     {'server': 'gpagw'},
+    'Manitou': {'server': 'manitou'},
+    'default': {'server': 'pool.ntp.org'}
+} %}
+
+{% set cfg = sync_settings.get(location, sync_settings.default) %}
