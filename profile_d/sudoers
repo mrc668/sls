@@ -1,4 +1,4 @@
-# Source: salt://sls/rootenv/sudoers
+# Source: salt://profile_d/sudoers
 
 # Host_Alias     FILESERVERS = fs1, fs2
 # Host_Alias     MAILSERVERS = smtp, smtp2
