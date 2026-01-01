@@ -1,10 +1,3 @@
-/etc/sysconfig/iptables:
-  file.managed:
-    - source: salt://personality/{{ grains['nodename']}}/iptables
-    - user: root
-    - group: root
-    - mode: 600
-
 iptables-services:
   pkg:
     - installed
@@ -14,22 +7,24 @@ iptables-services:
     - watch:
       - file: /etc/sysconfig/iptables
 
-# Ensure that /sbin/iptables exists
-/usr/local/sbin/sbinIPTables:
+/etc/sysconfig/iptables:
   file.managed:
-    - source: salt://sls/iptables/sbinIPTables
+    - source: salt://personality/{{ grains['id']}}/iptables
     - user: root
     - group: root
-    - mode: 755
-  cmd.run:
-    - cwd: /
+    - mode: 600
 
-/usr/local/sbin/networkManager:
-  file.managed:
-    - source: salt://sls/iptables/networkManager
-    - user: root
-    - group: root
-    - mode: 755
-  cmd.run:
-    - cwd: /
+# /opt/sls/firewall/mask.sls
 
+# First, ensure the service is stopped
+stop_firewalld:
+  service.dead:
+    - name: firewalld
+    - enable: False
+
+# Then, mask it so it cannot be started again
+mask_firewalld:
+  service.masked:
+    - name: firewalld
+    - require:
+      - service: stop_firewalld
