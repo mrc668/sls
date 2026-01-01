@@ -28,7 +28,7 @@
 {{ user }}_ssh_makefile:
   file.managed:
     - name: {{ home }}/.ssh/Makefile
-    - source: salt://sls/authorized_keys/Makefile-authorized_keys
+    - source: salt://authorized_keys/Makefile-authorized_keys
     - user: {{ user }}
     - group: {{ user }}
     - mode: 644
