@@ -29,4 +29,5 @@ manage_ip_forwarding:
   sysctl.present:
     - name: net.ipv4.ip_forward
     - value: {{ fwd_value }}
+    - config: /etc/sysctl.d/forward.conf
 
