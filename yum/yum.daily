@@ -1,0 +1,34 @@
+#!/bin/bash
+# src: salt:/managedFiles/yum.daily
+
+grep -q elasticsearch /etc/yum.repos.d/* && DisableRepo='elasticsearch*'
+grep -q security_zeek /etc/yum.repos.d/* && DisableRepo="$DisableRepo security_zeek"
+
+ExcludePackages="^zeek|^logstash|^kibana|^elasticsearch"
+
+LogFile=/var/log/yum-update.log
+CheckFile=/var/log/yum-check-update.log
+
+for i in $DisableRepo
+  do DisabledRepos="$DisabledRepos --disablerepo=$i"
+done
+
+for i in $(rpm -qa --queryformat "%{NAME}\n" | grep -Ev "$ExcludePackages" | sort | uniq); do 
+  date
+	#echo "yum -y update $DisabledRepos $i;"
+	yum -y update $DisabledRepos $i;
+  echo $i $?
+done > $LogFile 2>&1
+yum -y update $DisabledRepos  >> $LogFile 2>&1 
+
+yum check-update $DisabledRepos > $CheckFile  2>&1
+
+# We have removed zeek from updates
+#rpm -q zeek-lts >/dev/null 2>&1 && [ /opt/zeek/bin/zeek -nt /proc/$(pgrep -u zeek -f /opt/zeek/bin/zeek)/exe ] && /usr/local/sbin/zeekStart
+
+# restart sshd if it has been upgraded
+[ /usr/sbin/sshd -nt /proc/$(pgrep -u root -f /usr/sbin/sshd)/exe ] && systemctl restart sshd
+
+# fix libsss updates.
+sed -i /etc/nsswitch.conf -e "/^sudoers/s/sss//"
+

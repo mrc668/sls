@@ -1,0 +1,8 @@
+# src: salt://salt/managedFiles/logrotate-yum.daily
+/var/log/yum-check-update.log
+/var/log/yum-update.log
+{
+    missingok
+    notifempty
+}
+
