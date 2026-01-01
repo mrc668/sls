@@ -9,7 +9,7 @@
 
 #{% if grains['os'] == 'Springdale Open Enterprise' %}
 #include:
-#  - sls/salt/sdlSalt
+#  - salt/sdlSalt
 #{% endif %}
 
 salt-minion:
@@ -24,21 +24,21 @@ salt-minion:
 
 /etc/salt/minion:
   file.managed:
-    - source: salt://sls/salt/minion
+    - source: salt://salt/minion
     - user: root
     - group: root
     - mode: 644
 
 /etc/cron.d/salt:
   file.managed:
-    - source: salt://sls/salt/cron
+    - source: salt://salt/cron
     - user: root
     - group: root
     - mode: 644
 
 /etc/logrotate.d/salt:
   file.managed:
-    - source: salt://sls/salt/logrotate
+    - source: salt://salt/logrotate
     - user: root
     - group: root
     - mode: 644
@@ -49,7 +49,7 @@ salt3003:
 
 /usr/local/sbin/saltcall:
   file.managed:
-    - source: salt://sls/salt/saltcall
+    - source: salt://salt/saltcall
     - user: root
     - group: root
     - mode: 755

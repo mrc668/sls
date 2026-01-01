@@ -7,5 +7,5 @@
     - mode: 644
 
 include:
-  - sls/salt/restart-minion
+  - salt/restart-minion
 

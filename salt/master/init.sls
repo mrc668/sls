@@ -16,7 +16,7 @@ saltMaster.dependancies:
 
 /etc/cron.d/saltMastercron:
   file.managed:
-    - source: salt://sls/salt/master/saltMastercron
+    - source: salt://salt/master/saltMastercron
     - user: root
     - group: root
     - mode: 644
@@ -24,7 +24,7 @@ saltMaster.dependancies:
 saltMasterStart:
   file.managed:
     - name: /usr/local/sbin/saltMasterStart
-    - source: salt://sls/salt/master/saltMasterStart
+    - source: salt://salt/master/saltMasterStart
     - user: root
     - group: root
     - mode: 755
@@ -32,7 +32,7 @@ saltMasterStart:
 fw-salt-master.service:
   file.managed:
     - name: /etc/systemd/system/fw-salt-master.service
-    - source: salt://sls/salt/master/fw-salt-master.service
+    - source: salt://salt/master/fw-salt-master.service
     - user: root
     - group: root
     - mode: 640
@@ -46,14 +46,14 @@ fw-salt-master.service:
 fw-add-salt-master:
   file.managed:
     - name: /usr/local/sbin/fw-add-salt-master
-    - source: salt://sls/salt/master/fw-add-salt-master
+    - source: salt://salt/master/fw-add-salt-master
     - user: root
     - group: root
     - mode: 750
 
 /etc/salt/master:
   file.managed:
-    - source: salt://personality/{{ grains['host']}}/master
+    - source: salt://personality/{{ grains['host']}}/salt-master
     - user: root
     - group: root
     - mode: 644

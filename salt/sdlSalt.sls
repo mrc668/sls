@@ -3,7 +3,7 @@
 
 /usr/local/sbin/sdlSalt.sh:
   file.managed:
-    - source: salt://sls/salt/sdlSalt.sh
+    - source: salt://salt/sdlSalt.sh
     - user: root
     - group: root
     - mode: 755
@@ -11,4 +11,4 @@
     - cwd: /
 
 include:
-  - sls/salt/restart-minion
+  - salt/restart-minion
