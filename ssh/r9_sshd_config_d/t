@@ -1,0 +1,8 @@
+Include /etc/crypto-policies/back-ends/opensshserver.config
+SyslogFacility AUTHPRIV
+ChallengeResponseAuthentication no
+GSSAPIAuthentication no
+GSSAPICleanupCredentials no
+UsePAM yes
+X11Forwarding yes
+PrintMotd no
