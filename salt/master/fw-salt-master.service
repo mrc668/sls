@@ -1,11 +1,8 @@
 [Unit]
 Description=Firewall helper for Salt Master
-# Ensure network is fully initialized (DHCP finished, IPs assigned)
-After=network-online.target
-Wants=network-online.target
-# This ties the lifecycle to salt-master
-PartOf=salt-master.service
-After=salt-master.service
+# Wait for iptables to load its base rules first
+After=iptables.service
+Wants=iptables.service
 
 [Service]
 Type=oneshot
@@ -14,4 +11,6 @@ ExecStart=/usr/local/sbin/fw-add-salt-master
 User=root
 
 [Install]
-WantedBy=salt-master.service
+# We don't need the Install section if the Master is pulling it in, 
+# but keeping it for manual enablement is fine.
+WantedBy=salt-master.service 
