@@ -1,0 +1,11 @@
+# source salt://cron/cron.run.parts
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# run-parts
+01 * * * * root run-parts /etc/cron.hourly
+00 0 * * * root run-parts /etc/cron.daily
+22 2 * * 0 root run-parts /etc/cron.weekly
+42 4 1 * * root run-parts /etc/cron.monthly
+
