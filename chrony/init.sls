@@ -1,4 +1,4 @@
-# init.sls
+# /opt/sls/chrony/init.sls
 
 include:
 # Get the pillar 'is_timeserv', default to False if not found
