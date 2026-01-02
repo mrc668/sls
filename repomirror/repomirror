@@ -1,9 +1,11 @@
 #!/bin/bash
-# source salt://personality/backup/repomirror/repomirror
+# source salt://repomirror/repomirror
 
 source /etc/sysconfig/repomirror
 
+
 [ -d $dstBase ] || {
+  # change so that it outputs to stdout... cron pipes this script to logger.
   logger -sp daemon.info -t reposync $dstBase does not exist
   exit -1
 }
