@@ -1,9 +1,14 @@
 #!/bin/bash
 # source salt://personality/backup/repomirror/repomirror
 
-[ -d /nas2012/Web/CentOS ] || exit -1
+source /etc/sysconfig/repomirror
+
+[ -d $dstBase ] || {
+  logger -sp daemon.info -t reposync $dstBase does not exist
+  exit -1
+}
 releasever=$(cat /etc/redhat-release | sed -e "s/^.*release //" | cut -d\. -f1)
-RepoDir=/nas2012/Web/CentOS/reposync/$releasever
+RepoDir=${dstBase}/reposync/$releasever
 LogDir=/var/log/reposync
 mkdir -p $RepoDir
 mkdir -p $LogDir
@@ -38,13 +43,25 @@ function syncit {
                 ;;
                 esac
         }
+        find $RepoDir/$r -type d | xargs chmod a+rx
+        find $RepoDir/$r -type f | xargs chmod a+r
+}
+
+function sync_loop {
+  target_repo=$1
+  echo $target_repo --- $RepoDir/$target_repo
+  [ -d $RepoDir/$target_repo ] || mkdir $RepoDir/$target_repo
+  [ -d $RepoDir/$target_repo ] || echo BARF! failed to  $RepoDir/$target_repo
+  [ -d $RepoDir/$target_repo ] && syncit $target_repo
+  [ -d $RepoDir/$target_repo ] && rm -f $RepoDir/$target_repo/directory-not-managed
 }
 
 for i in $(grep \\[ /etc/yum.repos.d/*.repo | grep -Ev "Vault|Media" | sed -e "s/^.*\[//; s/\].*$//;"); do
-        echo $i --- $RepoDir/$i
-        [ -d $RepoDir/$i ] || mkdir $RepoDir/$i
-        [ -d $RepoDir/$i ] || echo BARF! failed to  $RepoDir/$i
-        [ -d $RepoDir/$i ] && syncit $i
-        [ -d $RepoDir/$i ] && rm -f $RepoDir/$i/directory-not-managed
+  #sync_loop $1 &
+  echo $i --- $RepoDir/$i
+  [ -d $RepoDir/$i ] || mkdir $RepoDir/$i
+  [ -d $RepoDir/$i ] || echo BARF! failed to  $RepoDir/$i
+  [ -d $RepoDir/$i ] && syncit $i
+  [ -d $RepoDir/$i ] && rm -f $RepoDir/$i/directory-not-managed
 done
 
