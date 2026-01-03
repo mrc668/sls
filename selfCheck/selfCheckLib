@@ -1,9 +1,10 @@
 # to be sourced into another file.
 # http://www.fromtexttospeech.com/
 # https://www.naturalreaders.com/online/
+# one more: https://freetools.textmagic.com/text-to-speech
 
 logger -p daemon.info -t selfCheck loading selfCheck Library
-LOGGER="logger -p daemon.info -t selfCheck"
+LOGGER="logger -p daemon.info -t $0"
 
 
 function checkSSL {
@@ -46,4 +47,66 @@ function checkSSL {
 
 
 } # checkSSL
+
+function check_ethtool {
+  dev=$1
+  devSound=$(for i in $(echo $dev | fold -w1); do echo /usr/local/mp3/$i.mp3; done)
+  EthToolOut=/dev/shm/ethtool.$dev
+  /sbin/ethtool $dev > $EthToolOut
+
+  grep Speed:.1000 $EthToolOut -q || {
+    grep Speed:.1000 $EthToolOut | $LOGGER
+    mpg123 $devSound /usr/local/mp3/{isnot,atGigSpeed}.mp3
+    mpg123 $devSound /usr/local/mp3/{isnot,atGigSpeed}.mp3
+	  AllIsWell=1
+  }
+
+  grep Duplex:.Full  $EthToolOut -q || {
+    grep Duplex:.Full $EthToolOut | $LOGGER
+    mpg123 $devSound /usr/local/mp3/isNotInDuplex.mp3
+    mpg123 $devSound /usr/local/mp3/isNotInDuplex.mp3
+	  AllIsWell=1
+  }
+
+  grep Link.detected:.yes  $EthToolOut -q || {
+    grep Link.detected:.yes $EthToolOut | $LOGGER
+    mpg123 $devSound /usr/local/mp3/hasNotDetectedLink.mp3
+    mpg123 $devSound /usr/local/mp3/hasNotDetectedLink.mp3
+	  AllIsWell=1
+  }
+}
+
+function check_ping {
+  remote=$1
+  shift
+  message="$*"
+
+  log=$(mktemp /dev/shm/selfCheck-XXXXXX)
+
+  /usr/lib64/nagios/plugins/check_fping $remote > $log 2>&1
+  cat $log | $LOGGER
+  grep OK $log -q || {
+    mpg123 $message
+    AllIsWell=1
+  }
+  rm -f $log
+}
+
+function check_dns {
+  question=$1; shift
+  server=$1; shift
+  answer=$1; shift
+  message="$*"
+
+  log=$(mktemp /dev/shm/selfCheck-XXXXXX)
+
+  echo "/usr/lib64/nagios/plugins/check_dns -H $question -s $server -q A -a $answer -w 5" | $LOGGER
+  /usr/lib64/nagios/plugins/check_dns -H $question -s $server -q A -a $answer -w 5 > $log 2>&1
+  cat $log | $LOGGER
+  grep OK $log -q || {
+    mpg123 $message
+    AllIsWell=1
+  }
+  rm -f $log
+}
 
