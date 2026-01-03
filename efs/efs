@@ -1,0 +1,109 @@
+#!/bin/bash
+# source: salt://pillars/efs/efs
+
+#/sbin/modprobe snd-pcsp
+#/bin/echo -en "\a" > /dev/console
+#source /tmp/foo/etc/sysconfig/efs
+MAPPER=$1
+DEV=$2
+MOUNT_POINT=$3
+
+PHRASE_MP=$(mktemp -d /dev/shm/efsXXXXXX)
+LOGGER="logger -p daemon.info -t efs"
+
+[ -b $DEV ] || {
+  echo $DEV is not a block special device
+  $LOGGER $DEV is not a block special device
+  exit
+}
+
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+		"--phrase")
+			shift
+			PHRASE=$1
+		;;
+	esac
+	shift
+done
+
+function start_me_up {
+	for i in httpd mysqld smb nmb
+	do
+		service $i start
+	done
+} # start me up
+
+function we_are_done {
+	# We're good 
+	$LOGGER "Home mounted... I'm done"
+	start_me_up
+	grep -q $PHRASE_MP /proc/mounts && umount $PHRASE_MP ; rmdir $PHRASE_MP
+	echo fixme: 
+	/usr/bin/systemctl stop efs-$MAPPER
+	exit
+} # we_are_done
+
+function try_again_later {
+	msg="$1"
+	logger -t efs -p daemon.info "$msg"
+	grep -q $PHRASE_MP /proc/mounts && umount $PHRASE_MP ; rmdir $PHRASE_MP
+	sleep 3
+	exit
+}
+
+function decrypt_disk {
+	grep $MOUNT_POINT /proc/mounts -q || {
+		$LOGGER cryptsetup \-d  $PHRASE create $MAPPER $DEV 
+		cryptsetup -d  $PHRASE create $MAPPER $DEV 
+    $LOGGER xfs_info /dev/mapper/$MAPPER
+    /sbin/xfs_info /dev/mapper/$MAPPER | $LOGGER
+		$LOGGER mount /dev/mapper/$MAPPER $MOUNT_POINT
+		mount /dev/mapper/$MAPPER $MOUNT_POINT
+	}
+}
+
+function get_phrase {
+	try_disk
+	try_web
+	try_env
+}
+
+function try_env {
+	sleep 1;
+} # try_env
+
+function try_web {
+	sleep 1;
+} # try_web
+
+function try_disk {
+	for part in $( fdisk -l 2>/dev/null | grep ^/dev/ | grep -Ev "Linux raid|swap" | cut -d" " -f1 | sed -e "s|/dev/||" ); do
+		grep /dev/mapper/$MAPPER /proc/mounts -q || {
+			$LOGGER is $part in use?
+			grep $part /proc/mounts /proc/mdstat /etc/fstab -q || {
+				$LOGGER try to mount $part and look for phrase
+				mount /dev/$part $PHRASE_MP 2>/dev/null && {
+					hs=$(hostname -s)
+					for i in phrase-$hs.txt phrase.txt phrase; do
+						[ -f  $PHRASE_MP/$i ] && {
+							PHRASE=$PHRASE_MP/$i
+							$LOGGER Trying $PHRASE
+							decrypt_disk
+						}
+					done
+					grep /dev/mapper/$MAPPER /proc/mounts \
+						&& grep -q $PHRASE_MP /proc/mounts \
+						&& umount $PHRASE_MP \
+						&& rmdir $PHRASE_MP
+				} # attempt to mount $part
+			} # $part is not in use
+		} # is the partition mounted?
+	done
+} # try_disk
+
+grep $MOUNT_POINT /proc/mounts -q || get_phrase
+grep $MOUNT_POINT /proc/mounts -q && we_are_done || sleep 10
+grep -q $PHRASE_MP /proc/mounts && umount $PHRASE_MP ; rmdir $PHRASE_MP
+

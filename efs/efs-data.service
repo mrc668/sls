@@ -1,0 +1,15 @@
+# start with: systemctl start efs-data.service
+# enable on boot: systemctl enable efs-data.service 
+[Unit]
+Description=Encrypted file service
+Requires=mdadm.service local-fs.target
+After=local-fs.target
+
+[Service]
+Restart=always
+ExecStart=/usr/sbin/efs data /dev/md127p1 /data
+ExecReload=/bin/kill -HUP $MAINPID
+
+[Install]
+WantedBy=multi-user.target 
+
