@@ -46,4 +46,12 @@ repomirror.etc:
     - group: root
     - mode: 644
 
+yumConfBackup.bin:
+  file.managed:
+    - source: salt://repomirror/backup-yum-conf.sh
+    - name: /usr/local/sbin/backup-yum-conf.sh
+    - user: root
+    - group: root
+    - mode: 755
+
 

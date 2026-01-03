@@ -1,4 +1,5 @@
 #!/bin/bash
 # source salt://repomirror/cron
 
+/usr/local/sbin/backup-yum-conf.sh 2>&1 | logger -p daemon.info -t backup-yum-conf
 /usr/local/sbin/repomirror 2>&1 | logger -p daemon.info -t cron.daily.reposync
