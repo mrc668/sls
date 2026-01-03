@@ -1,0 +1,8 @@
+42 3 * * 0 root /usr/local/sbin/backupMySQL /var/lib/backup.0
+42 3 * * 1 root /usr/local/sbin/backupMySQL /var/lib/backup.1
+42 3 * * 2 root /usr/local/sbin/backupMySQL /var/lib/backup.2
+42 3 * * 3 root /usr/local/sbin/backupMySQL /var/lib/backup.3
+42 3 * * 4 root /usr/local/sbin/backupMySQL /var/lib/backup.4
+42 3 * * 5 root /usr/local/sbin/backupMySQL /var/lib/backup.5
+42 3 * * 6 root /usr/local/sbin/backupMySQL /var/lib/backup.6
+

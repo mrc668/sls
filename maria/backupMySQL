@@ -1,0 +1,54 @@
+#!/bin/bash
+
+dumpDir=$1
+[ "$dumpDir" ] || { echo $0 DumpDir ; exit -1; }
+[ -d "$dumpDir" ] || mkdir $dumpDir
+[ -d "$dumpDir" ] || { echo Failed to make $dumpDir; exit -2; }
+
+
+function dumpTable {
+  db=$1
+  table=$2
+  cp /dev/null $dumpDir/${db}.${table}.sql
+  while ! grep "Dump completed"  $dumpDir/${db}.${table}.sql -q; do
+    /usr/bin/mysqldump $db $table > $dumpDir/${db}.${table}.sql 
+  done
+
+}
+
+function dumpDB {
+  db=$1
+  tables=$(/usr/bin/mysql $db -e "show tables" | grep -v ^Tables_in)
+  echo create database \"$i\" \; >> $dumpDir/00-CreateDBs.sql
+  for i in $tables; do 
+    dumpTable $db $i &
+  done
+}
+
+function dumpDBs {
+  dbs=$(/usr/bin/mysql -e "show databases" | grep -Ev "Database|mysql|information_schema|performance_schema|maria")
+  cp /dev/null $dumpDir/00-CreateDBs.sql
+  for i in $dbs; do
+    #echo Dumping $i
+    dumpDB $i
+  done
+
+}
+
+UserSQL="select concat('\'',user,'\'@\'',host,'\'') from mysql.user where user != 'root' and user != ''" 
+mysql -BNe "$UserSQL" | while read uh; do 
+  mysql -BNe "show grants for $uh" | sed 's/$/;/; s/\\\\/\\/g' 
+done >  $dumpDir/20-users.sql
+
+dumpDBs
+
+for i in global_priv user db tables_priv columns_priv procs_priv; do
+  dumpTable mysql $i &
+done
+
+echo 'select * from mysql.proc where db != "mysql"' | /usr/bin/mysql mysql > $dumpDir/30-procs.sql
+echo 'select * from mysql.procs_priv where db != "mysql"' | /usr/bin/mysql mysql >> $dumpDir/30-procs.sql
+
+
+
+
