@@ -66,4 +66,6 @@ for i in $(grep \\[ /etc/yum.repos.d/*.repo | grep -Ev "Vault|Media" | sed -e "s
   [ -d $RepoDir/$i ] && syncit $i
   [ -d $RepoDir/$i ] && rm -f $RepoDir/$i/directory-not-managed
 done
+cd $RepoDir
+find . -name \*.rpm > rpmList.txt
 
