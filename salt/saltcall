@@ -1,6 +1,16 @@
 #!/bin/bash
 # salt://sls/salt/saltcall
 
+[ -x /sbin/sestatus ] && {
+  source /etc/selinux/config
+  echo $SELINUX | grep -E "permissive|enforce" -q && /sbin/sestatus | grep disab -q && {
+    echo "MAINTENANCE LOCK: SELinux is explicitly disabled."
+    echo "Aborting salt-call to prevent accidental mode transition."
+    exit 1
+  }
+}
+
+
 pkill -9 -f salt-call
 systemctl status salt-minion >/dev/null 2>&1 ||  systemctl restart salt-minion >/dev/null 2>&1
 systemctl status salt-minion >/dev/null 2>&1 || exit
