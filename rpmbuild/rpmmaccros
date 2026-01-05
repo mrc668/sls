@@ -1,0 +1,12 @@
+# Point to your large /opt partition
+%_topdir                /home/rpmbuild/rpmbuild
+%_tmppath               /opt/rpmbuild/tmp
+
+# Set your packager info
+%packager               Your Name <you@eotn.calnek.com>
+%vendor                 EOTN Projects
+
+# Optimize the build process
+%_smp_mflags            -j%(nproc)
+%_signature             gpg
+%_gpg_name              Your GPG Key ID

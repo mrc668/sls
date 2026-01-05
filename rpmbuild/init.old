@@ -1,0 +1,66 @@
+include:
+  - users/milton
+  - sls/rpmbuild/kernel
+  - sls/rpmbuild/rpm
+  - sls/rpmbuild/compiler
+  - sls/rpmbuild/devel
+  - sls/rpmbuild/scripting
+  - sls/rpmbuild/utils
+
+/var/rpmbuild:
+  file.directory:
+    - user: root
+    - group: users
+    - mode: 1777
+
+/var/rpmbuild/rpmrc:
+  file.managed:
+    - source: salt://sls/rpmbuild/rpmrc
+    - user: root
+    - group: users
+    - mode: 644
+  
+/var/rpmbuild/gitignore:
+  file.managed:
+    - source: salt://sls/rpmbuild/gitignore
+    - user: root
+    - group: users
+    - mode: 644
+  
+/var/rpmbuild/gitconfig:
+  file.managed:
+    - source: salt://sls/rpmbuild/gitconfig
+    - user: root
+    - group: users
+    - mode: 644
+  
+/var/rpmbuild/RPMS:
+  file.directory:
+    - user: root
+    - group: users
+    - mode: 1777
+
+/var/rpmbuild/SOURCES:
+  file.directory:
+    - user: root
+    - group: users
+    - mode: 1777
+
+/var/rpmbuild/SPECS:
+  file.directory:
+    - user: root
+    - group: users
+    - mode: 1777
+
+/var/rpmbuild/BUILD:
+  file.directory:
+    - user: root
+    - group: users
+    - mode: 1777
+
+/var/rpmbuild/SRPMS:
+  file.directory:
+    - user: root
+    - group: users
+    - mode: 1777
+

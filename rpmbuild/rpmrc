@@ -1,0 +1,32 @@
+# General settings
+topdir                 /var/rpmbuild  # Your RPM build directory
+_tmppath                /var/tmp       # Temporary build directory
+_rpmdir                 %{topdir}/RPMS  # Where built RPMs go
+_sourcedir              %{topdir}/SOURCES # Where source tarballs go
+_specdir                %{topdir}/SPECS  # Where spec files go
+_builddir               %{topdir}/BUILD  # Where source code is built
+_srcrpmdir              %{topdir}/SRPMS  # Where source RPMs go
+
+# RPM build options
+buildflags              -j$(nproc)    # Use all available CPU cores for parallel builds
+rpmbuild_flags          --verbose     # Be verbose during builds (optional)
+
+# Signing settings (optional, but recommended)
+#_gpg_name              Your Name <your.email@example.com> # Your GPG key ID or name
+#_gpg_path              ~/.gnupg       # Path to your GPG keyring (usually the default)
+#_sign_packages         1             # Automatically sign built packages
+
+# Package naming and versioning
+%_default_arch         x86_64          # Your default architecture (adjust as needed)
+%_source_file_pattern   *.tar.gz *.tar.bz2 *.tar.xz *.zip *.tgz # Common source archive extensions
+
+# Debugging settings (optional)
+#debug_package           1             # Create debuginfo packages automatically
+
+# Other useful settings
+#disttag                 .el9           # Your distribution tag (e.g., .el8, .f37, etc.)
+#_use_internal_dependency_generator 1 # Use internal dependency generator (often preferred)
+
+# Macros (for convenience)
+%nameprefix             # Prefix for package names (useful for personal packages)
+

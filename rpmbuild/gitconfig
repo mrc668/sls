@@ -1,0 +1,15 @@
+[user]
+        name = Milton Calnek
+        email = milton@calnek.com
+[alias]
+        pu = push
+        br = branch
+        co = checkout
+        lo = log --name-status
+        ci = commit
+        st = status
+[core]
+        editor = vim -f
+
+[push]
+        default = matching
