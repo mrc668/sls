@@ -47,6 +47,10 @@ salt3003:
   file.absent:
     - name: /etc/cron.daily/salt3003.sh
 
+salt-first-call:
+  file.absent:
+    - name: /etc/cron.d/setup-salt
+
 /usr/local/sbin/saltcall:
   file.managed:
     - source: salt://salt/saltcall
