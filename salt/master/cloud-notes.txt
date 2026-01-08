@@ -1,0 +1,9 @@
+Salt-Cloud Planning
+Salt-Cloud Configuration Considerations 
+1. Provider Variables: Use Salt Pillars for sensitive data like DigitalOcean tokens. Variablize regions and define SSH keys. 
+2. Profile Variations: Create variations for machine sizes, images/OS, and naming conventions. 
+3. Tooling & CLI: Ensure provider-specific CLIs like doctl and python dependencies like apache-libcloud are installed. 
+4. Configuration Directory Management: Manage cloud profiles and providers as modular files in /etc/salt/.
+
+Install Salt-Cloud State
+Salt-Cloud Installation State: This state installs the salt-cloud package and its core dependencies, then ensures the standard configuration directories for providers, profiles, and maps are present with secure permissions.
