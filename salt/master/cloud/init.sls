@@ -20,3 +20,9 @@ install_cloud_tooling:
     - group: root
     - mode: 700
     - makedirs: True
+#
+# Add this to the top of salt/master/cloud/init.sls
+include:
+  - digitalOcean  # This assumes digitalOcean.sls is in the same 'cloud' folder
+
+# ... existing pkg and directory states ...
