@@ -58,4 +58,19 @@ fw-add-salt-master:
     - group: root
     - mode: 644
 
+master-audit:
+  file.managed:
+    - source: salt://salt/master/master-audit.conf
+    - name: /etc/salt/master.d/audit.conf
+    - user: root
+    - group: root
+    - mode: 644
+
+salt.master.logrotate:
+  file.managed:
+    - source: salt://salt/master/logrotate.conf
+    - name: /etc/logrotate.d/salt-master.conf
+    - user: root
+    - group: root
+    - mode: 644
 

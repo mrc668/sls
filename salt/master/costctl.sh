@@ -9,7 +9,16 @@ CHECK_INTERVAL=5
 STATE="WAITING"
 idle_time=0
 
-echo "Monitor started. Current State: $STATE"
+function delete_cloud_compute {
+  logger -p daemon.info -t $0 "delete_cloud_compute()"
+  /usr/local/sbin/doctl compute droplet list | grep ^[0-9] | while read a b; do 
+    logger -p daemon.info -t $0 "delete_cloud_compute($a)"
+    /usr/local/sbin/doctl compute droplet delete $a --force
+  done
+}
+
+
+logger -p daemon.info -t $0 "Monitor started. Current State: $STATE"
 
 while true; do
     # Check for active connection
@@ -19,7 +28,7 @@ while true; do
         "WAITING")
             if [ -n "$connection_active" ]; then
                 STATE="CONNECTED"
-                echo "$(date) IP $TARGET_IP detected. Transitioning to state: $STATE"
+                logger -p daemon.info -t $0 "IP $TARGET_IP detected. Transitioning to state: $STATE"
             fi
             ;;
 
@@ -27,7 +36,7 @@ while true; do
             if [ -z "$connection_active" ]; then
                 STATE="PENDING"
                 idle_time=0
-                echo "$(date) Connection lost. Transitioning to state: $STATE (Timer started)"
+                logger -p daemon.info -t $0 "Connection lost. Transitioning to state: $STATE (Timer started)"
             fi
             ;;
 
@@ -35,14 +44,14 @@ while true; do
             if [ -n "$connection_active" ]; then
                 STATE="CONNECTED"
                 idle_time=0
-                echo "$(date) Connection re-established. Transitioning back to state: $STATE"
+                logger -p daemon.info -t $0 "Connection re-established. Transitioning back to state: $STATE"
             else
                 idle_time=$((idle_time + CHECK_INTERVAL))
                 
                 # Check if 10 minutes (600s) have passed
                 if [ "$idle_time" -ge "$IDLE_LIMIT" ]; then
-                    echo "$(date) 10 minute grace period expired. Executing shutdown."
-                    bash "$SHUTDOWN_SCRIPT"
+                    logger -p daemon.info -t $0 "10 minute grace period expired. Executing shutdown."
+                    delete_cloud_compute
                     exit 0 # Systemd will restart the script, putting us back in WAITING
                 fi
             fi

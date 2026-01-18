@@ -1,0 +1,20 @@
+[Unit]
+Description=Cost Control Script Service
+# Ensures sshd is started before this script runs
+After=sshd.service
+Requires=sshd.service
+
+[Service]
+Type=simple
+# Path to your script
+ExecStart=/usr/local/sbin/costctl.sh
+# Respawns the script regardless of why it exited (success or failure)
+Restart=always
+# Wait 5 seconds before restarting to prevent rapid-fire loops if the script crashes
+RestartSec=5
+# Ensures it runs as root (standard for system-level scripts)
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
