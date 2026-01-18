@@ -13,6 +13,7 @@ iptables-services:
     - user: root
     - group: root
     - mode: 600
+    - template: jinja
 
 # /opt/sls/firewall/mask.sls
 
@@ -28,3 +29,6 @@ mask_firewalld:
     - name: firewalld
     - require:
       - service: stop_firewalld
+
+include:
+  - iptables/ipv6
