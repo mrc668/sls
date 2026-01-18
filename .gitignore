@@ -1,9 +1,6 @@
 rootenv/init.sls
-gravity.db
-# working files.
-# What are you thinking... you need the keep the working files!!
-#
-
+/t
+/t[0-9]
 # patch files
 **.orig
 **.rej
