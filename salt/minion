@@ -5,7 +5,11 @@ ping_interval: 2
 ipv6: False
 
 default_include: minion.d/*.conf
+{% if grains['id'] == 'doTorgw' %}
+master: monitor.calnek.com
+{% else %}
 master: salt
+{% endif %}
 retry_dns: 30
 retry_dns_count: 3
 master_port: 4506
@@ -17,10 +21,7 @@ minion_id_lowercase: True
 verify_env: True
 cache_jobs: True
 enable_gpu_grains: False
-mine_functions:
-  test.ping: []
-  network.ip_addrs:
-    interface: eth0
-    cidr: '10.0.0.0/8'
 state_output: full
 state_verbose: True
+# there are ways to harden this.
+

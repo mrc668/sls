@@ -28,6 +28,7 @@ salt-minion:
     - user: root
     - group: root
     - mode: 644
+    - template: jinja
 
 /etc/cron.d/salt:
   file.managed:
