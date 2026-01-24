@@ -3,7 +3,7 @@ logrotate:
     - installed
   
 /etc/cron.daily/logrotate:
-  file.managed:
+  file.absent:
     - source: salt://logrotate/cron
     - user: root
     - group: root
