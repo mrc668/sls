@@ -51,26 +51,29 @@ fw-add-salt-master:
     - group: root
     - mode: 750
 
-/etc/salt/master:
+/etc/salt/master.d/local.conf:
   file.managed:
     - source: salt://personality/{{ grains['host']}}/salt-master
     - user: root
     - group: root
     - mode: 644
 
-master-audit:
-  file.managed:
-    - source: salt://salt/master/master-audit.conf
-    - name: /etc/salt/master.d/audit.conf
-    - user: root
-    - group: root
-    - mode: 644
 
 salt.master.logrotate:
-  file.managed:
-    - source: salt://salt/master/logrotate.conf
+  file.absent:
     - name: /etc/logrotate.d/salt-master.conf
+
+manage_salt_master_line:
+  file.managed:
+    - name: /etc/salt/master
+    - contents: "default_include: master.d/*.conf"
+# /opt/salt/sync_master_d.sls
+
+sync_master_conf_dir:
+  file.recurse:
+    - name: /etc/salt/master.d
+    - source: salt://salt/master/master_d
     - user: root
     - group: root
-    - mode: 644
-
+    - dir_mode: '0755'
+    - file_mode: '0644'
