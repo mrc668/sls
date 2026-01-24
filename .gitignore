@@ -1,4 +1,3 @@
-rootenv/init.sls
 /t
 /t[0-9]
 # patch files
