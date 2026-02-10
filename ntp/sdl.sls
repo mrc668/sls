@@ -18,9 +18,16 @@ chrony:
   ) 
 %}
 
+{% if grains.chrony != '' %}
+  {% set conf_file=grains.chrony %}
+{% else %}
+  {% set conf_file="eotn" %}
+{% endif %}
+
+
 /etc/chrony.conf:
   file.managed:
-    - source: salt://{{definedRole.conf}}
+    - source: salt://sls/ntp/chrony.conf.{{conf_file}}
     - user: chrony
     - group: chrony
     - mode: 644
