@@ -1,0 +1,41 @@
+# nftables/init.sls
+
+nftables_pkg:
+  pkg.installed:
+    - name: nftables
+
+# Ensure firewalld is gone so it doesn't flush our rules
+stop_firewalld:
+  service.dead:
+    - name: firewalld
+    - enable: False
+
+mask_firewalld:
+  service.masked:
+    - name: firewalld
+    - require:
+      - service: stop_firewalld
+
+/etc/nftables.conf:
+  file.managed:
+    - source: salt://personality/{{ grains['id'] }}/nftables.conf
+    - user: root
+    - group: root
+    - mode: 600
+    - template: jinja
+    - require:
+      - pkg: nftables_pkg
+
+# This force-reloads the ruleset into the kernel immediately
+reload_nftables:
+  cmd.wait:
+    - name: /usr/sbin/nft -f /etc/nftables.conf
+    - watch:
+      - file: /etc/nftables.conf
+
+nftables_service:
+  service.running:
+    - name: nftables
+    - enable: True
+    - watch:
+      - file: /etc/nftables.conf
