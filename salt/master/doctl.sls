@@ -4,6 +4,14 @@ doctl_dependencies:
     - pkgs:
       - tar
       - gzip
+      - python3-pip
+
+install_salt_do_library:
+  pip.installed:
+    - name: python-digitalocean
+    - reload_modules: True  # Vital: tells Salt to find the new DO modules immediately
+    - require:
+      - pkg: doctl_dependencies
 
 # 2. Extract the binary
 install_doctl:
