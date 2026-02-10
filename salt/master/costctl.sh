@@ -15,6 +15,7 @@ function delete_cloud_compute {
     logger -p daemon.info -t $0 "delete_cloud_compute($a)"
     /usr/local/sbin/doctl compute droplet delete $a --force
   done
+  /usr/local/sbin/doctl compute droplet list | logger -p daemon.info -t "$0:delete_cloud_compute"
 }
 
 
