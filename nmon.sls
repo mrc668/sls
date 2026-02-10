@@ -7,6 +7,7 @@ netmon.dependancies:
       - nload
       - bmon
       - nethogs
+      - tmux 
 
 
 # don't need this... apparently haven't used it since before c7?
