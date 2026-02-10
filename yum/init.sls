@@ -12,13 +12,19 @@ yum_symlink:
     - target: /usr/bin/dnf
     - force: False
 
-/etc/cron.daily/yum.daily:
+/usr/local/sbin/yum.daily:
   file.managed:
     - source: salt://yum/yum.daily
     - user: root
     - group: root
     - mode: 755
 
+yum_daily_symlink:
+  file.symlink:
+    - name: /etc/cron.daily/yum.daily
+    - target: /usr/local/sbin/yum.daily
+    - force: True
+    
 /etc/logrotate.d/yum-daily.conf:
   file.managed:
     - source: salt://yum/logrotate-yum.daily
