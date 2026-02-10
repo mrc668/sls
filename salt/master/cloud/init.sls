@@ -26,3 +26,16 @@ include:
   - digitalOcean  # This assumes digitalOcean.sls is in the same 'cloud' folder
 
 # ... existing pkg and directory states ...
+# Ensure the DigitalOcean configuration is valid and quoted
+{% for daemon in ['master', 'minion'] %}
+/etc/salt/{{ daemon }}.d/digital_ocean.conf:
+  file.managed:
+    - user: root
+    - group: root
+    - mode: 644
+    - makedirs: True
+    - contents: |
+        digital_ocean:
+          personal_access_token: {{ salt['pillar.get']('do_token') | json }}
+          digital_ocean.token: {{ salt['pillar.get']('do_token') | json }}
+{% endfor %}
