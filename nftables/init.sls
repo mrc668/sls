@@ -17,6 +17,8 @@ mask_firewalld:
       - service: stop_firewalld
 
 /etc/nftables.conf:
+  file.absent
+/etc/sysconfig/nftables.conf:
   file.managed:
     - source: salt://personality/{{ grains['id'] }}/nftables.conf
     - user: root
