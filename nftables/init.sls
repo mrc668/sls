@@ -28,14 +28,14 @@ mask_firewalld:
 
 # This force-reloads the ruleset into the kernel immediately
 reload_nftables:
-  cmd.wait:
+  cmd.run:
     - name: /usr/sbin/nft -f /etc/nftables.conf
-    - watch:
+    - onchanges:
       - file: /etc/nftables.conf
 
 nftables_service:
   service.running:
     - name: nftables
     - enable: True
-    - watch:
+    - require:
       - file: /etc/nftables.conf
