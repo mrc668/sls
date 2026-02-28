@@ -1,0 +1,202 @@
+#!/bin/bash
+# =============================================================================
+# loadtest.sh - Web scenario load test using ab and siege
+#
+# Usage: ./loadtest.sh [scenario description words...]
+# Example: ./loadtest.sh "Direct to internet without mod_security"
+#
+# The script resolves the target IP at runtime (since it changes daily),
+# prompts for confirmation, then runs ab and siege against the three
+# simulated web-app assets and saves results to a timestamped directory.
+# =============================================================================
+
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# 1. Scenario title from command-line args
+# ---------------------------------------------------------------------------
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 <scenario title words...>"
+    echo "Example: $0 Direct to internet without mod_security"
+    exit 1
+fi
+
+SCENARIO_TITLE="$*"
+
+# ---------------------------------------------------------------------------
+# 2. Runtime configuration  ← edit these as needed
+# ---------------------------------------------------------------------------
+[ -f /etc/sysconfig/testScenario ] && source /etc/sysconfig/testScenario
+[ "$TARGET_HOST" ] || {
+  echo Set the target host in /etc/sysconfig/testScenario
+  exit -1
+}
+PROTO="https"
+BASE_PATH="/loadTest"
+
+# ab settings
+AB_REQUESTS=1000
+AB_CONCURRENCY=50
+
+# siege settings
+SIEGE_USERS=50
+SIEGE_TIME="1M"          # run for 1 minute
+
+# Files to test
+FILES=("index.html" "app.js" "hero.jpg")
+
+# ---------------------------------------------------------------------------
+# 3. Resolve / confirm target
+# ---------------------------------------------------------------------------
+TARGET_HOST="${TARGET_HOST:-137.184.161.129}"
+
+echo "============================================================"
+echo "Scenario : ${SCENARIO_TITLE}"
+echo "Target   : ${PROTO}://${TARGET_HOST}${BASE_PATH}/"
+echo "============================================================"
+
+# ---------------------------------------------------------------------------
+# 4. Output directory
+# ---------------------------------------------------------------------------
+TIMESTAMP=$(date +"%Y%m%d_%H%M")
+# Replace spaces/slashes in title to make a safe dir name component
+SAFE_TITLE=$(echo "${SCENARIO_TITLE}" | tr ' /' '__' | tr -dc '[:alnum:]_-')
+RESULTS_DIR="loadtest_${TIMESTAMP}_${SAFE_TITLE}"
+mkdir -p "${RESULTS_DIR}"
+
+META_FILE="${RESULTS_DIR}/scenario.txt"
+{
+    echo "Scenario  : ${SCENARIO_TITLE}"
+    echo "Timestamp : ${TIMESTAMP}"
+    echo "Target    : ${PROTO}://${TARGET_HOST}"
+    echo "AB        : requests=${AB_REQUESTS}  concurrency=${AB_CONCURRENCY}"
+    echo "Siege     : users=${SIEGE_USERS}  time=${SIEGE_TIME}"
+    echo "Files     : ${FILES[*]}"
+} | tee "${META_FILE}"
+
+echo ""
+echo "Results will be saved to: ${RESULTS_DIR}/"
+echo ""
+
+# ---------------------------------------------------------------------------
+# 5. Check tools
+# ---------------------------------------------------------------------------
+for tool in ab siege; do
+    if ! command -v "${tool}" &>/dev/null; then
+        echo "ERROR: '${tool}' not found. Install it (e.g. yum install httpd-tools siege) and retry."
+        exit -2
+    fi
+done
+
+# ---------------------------------------------------------------------------
+# 6. Helper – run ab against one URL
+# ---------------------------------------------------------------------------
+run_ab() {
+    local label="$1"
+    local url="$2"
+    local outfile="${RESULTS_DIR}/ab_${label}.txt"
+
+    echo "--- ab: ${label} ---"
+    echo "URL: ${url}"
+
+    ab \
+        -n "${AB_REQUESTS}" \
+        -c "${AB_CONCURRENCY}" \
+        -k \
+        -r \
+        -H "Accept-Encoding: gzip,deflate" \
+        -g "${RESULTS_DIR}/ab_${label}.tsv" \
+        "${url}" \
+    | tee "${outfile}"
+
+    echo ""
+}
+
+# ---------------------------------------------------------------------------
+# 7. Helper – run siege against a URL list
+# ---------------------------------------------------------------------------
+run_siege() {
+    local label="$1"
+    local urlfile="$2"
+    local outfile="${RESULTS_DIR}/siege_${label}.txt"
+    local logfile="${RESULTS_DIR}/siege_${label}.log"
+
+    echo "--- siege: ${label} ---"
+    cat "${urlfile}"
+
+    siege \
+        --concurrent="${SIEGE_USERS}" \
+        --time="${SIEGE_TIME}" \
+        --file="${urlfile}" \
+        --log="${logfile}" \
+        --rc=/dev/null \
+        -b \
+    2>&1 | tee "${outfile}"
+
+    echo ""
+}
+
+# ---------------------------------------------------------------------------
+# 8. Build siege URL file (all three assets)
+# ---------------------------------------------------------------------------
+SIEGE_URLFILE="${RESULTS_DIR}/siege_urls.txt"
+{
+    for f in "${FILES[@]}"; do
+        echo "${PROTO}://${TARGET_HOST}${BASE_PATH}/${f}"
+    done
+} > "${SIEGE_URLFILE}"
+
+# ---------------------------------------------------------------------------
+# 9. Run ab per file
+# ---------------------------------------------------------------------------
+echo "========================================================"
+echo "Running Apache Bench (ab) tests..."
+echo "========================================================"
+for f in "${FILES[@]}"; do
+    LABEL=$(echo "${f}" | tr '.' '_')
+    URL="${PROTO}://${TARGET_HOST}${BASE_PATH}/${f}"
+    run_ab "${LABEL}" "${URL}"
+done
+
+# ---------------------------------------------------------------------------
+# 10. Run siege across all files
+# ---------------------------------------------------------------------------
+echo "========================================================"
+echo "Running Siege test (all files, ${SIEGE_TIME})..."
+echo "========================================================"
+run_siege "all_files" "${SIEGE_URLFILE}"
+
+# ---------------------------------------------------------------------------
+# 11. Summary
+# ---------------------------------------------------------------------------
+SUMMARY="${RESULTS_DIR}/summary.txt"
+{
+    echo "========================================================"
+    echo "LOAD TEST SUMMARY"
+    echo "========================================================"
+    echo "Scenario  : ${SCENARIO_TITLE}"
+    echo "Timestamp : ${TIMESTAMP}"
+    echo "Target    : ${PROTO}://${TARGET_HOST}"
+    echo ""
+    echo "--- ab results (Requests/sec) ---"
+    for f in "${FILES[@]}"; do
+        LABEL=$(echo "${f}" | tr '.' '_')
+        RPS=$(grep "^Requests per second:" "${RESULTS_DIR}/ab_${LABEL}.txt" | awk '{print $4, $5}')
+        FAILED=$(grep "^Failed requests:" "${RESULTS_DIR}/ab_${LABEL}.txt" | awk '{print $3}')
+        P99=$(grep "^  99%" "${RESULTS_DIR}/ab_${LABEL}.txt" | awk '{print $2}' || echo "n/a")
+        echo "  ${f}: ${RPS}  failed=${FAILED}  p99=${P99}ms"
+    done
+    echo ""
+    echo "--- siege summary ---"
+    grep -E "Transactions:|Availability:|Elapsed time:|Response time:|Transaction rate:|Throughput:|Concurrency:|Successful|Failed" \
+        "${RESULTS_DIR}/siege_all_files.txt" | sed 's/^/  /'
+} | tee "${SUMMARY}"
+
+echo ""
+echo "All results saved to: ${RESULTS_DIR}/"
+echo "  scenario.txt   – test metadata"
+echo "  ab_*.txt       – full ab output per file"
+echo "  ab_*.tsv       – ab gnuplot-ready data per file"
+echo "  siege_*.txt    – siege output"
+echo "  siege_*.log    – siege log"
+echo "  summary.txt    – this summary"
