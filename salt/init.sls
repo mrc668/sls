@@ -7,10 +7,11 @@
   ) 
 %}
 
-#{% if grains['os'] == 'Springdale Open Enterprise' %}
-#include:
-#  - salt/sdlSalt
-#{% endif %}
+include:
+{% if grains['os'] == 'Springdale Open Enterprise' %}
+  - salt/sdlSalt
+{% endif %}
+  - salt/watchit
 
 salt-minion:
   pkg:
