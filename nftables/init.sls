@@ -18,6 +18,16 @@ mask_firewalld:
 
 /etc/nftables.conf:
   file.absent
+
+/etc/sysconfig/nftFlush.conf:
+  file.managed:
+    - source: salt://nftables/flush.conf
+    - user: root
+    - group: root
+    - mode: 600
+    - require:
+      - pkg: nftables_pkg
+
 /etc/sysconfig/nftables.conf:
   file.managed:
     - source: salt://personality/{{ grains['id'] }}/nftables.conf
@@ -31,13 +41,14 @@ mask_firewalld:
 # This force-reloads the ruleset into the kernel immediately
 reload_nftables:
   cmd.run:
-    - name: /usr/sbin/nft -f /etc/nftables.conf
+    - name: /usr/sbin/nft -f /etc/sysconfig/nftables.conf
     - onchanges:
-      - file: /etc/nftables.conf
+      - file: /etc/sysconfig/nftables.conf
+    - unless: /usr/sbin/nft list ruleset | grep -q 'table'
 
 nftables_service:
   service.running:
     - name: nftables
     - enable: True
     - require:
-      - file: /etc/nftables.conf
+      - file: /etc/sysconfig/nftables.conf
