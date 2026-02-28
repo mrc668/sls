@@ -1,6 +1,6 @@
 # source salt://cron/cron.run.parts
 SHELL=/bin/bash
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin
 MAILTO=root
 
 # run-parts
