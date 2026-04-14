@@ -36,3 +36,11 @@ nginx_service:
 # Dynamically include the personality sites based on the 'host' grain
 include:
   - personality.{{ grains['host'] }}.sites
+
+# /srv/salt/hardening/nginx_selinux.sls
+
+allow_nginx_network_connect:
+  selinux.boolean:
+    - name: httpd_can_network_connect
+    - value: True
+    - persist: True
