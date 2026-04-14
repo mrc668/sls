@@ -1,12 +1,3 @@
-# 1. Deploy the script itself
-deploy_costctl_script:
-  file.managed:
-    - name: /usr/local/sbin/costctl.sh
-    - source: salt://salt/master/costctl.sh
-    - user: root
-    - group: root
-    - mode: '0755'  # Executable
-
 # 2. Deploy the systemd unit file
 deploy_cost_service_unit:
   file.managed:
@@ -24,11 +15,9 @@ run_cost_monitor_service:
     - name: cost-monitor
     - enable: True
     - require:
-      - file: deploy_costctl_script
       - file: deploy_cost_service_unit
     # This ensures that if you change the script or the service file, 
     # Salt will automatically restart the service to apply changes.
     - watch:
-      - file: deploy_costctl_script
       - file: deploy_cost_service_unit
 

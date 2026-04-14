@@ -14,21 +14,16 @@ install_salt_do_library:
       - pkg: doctl_dependencies
 
 # 2. Extract the binary
-install_doctl:
-  archive.extracted:
-    - name: /usr/local/bin/
-    - source: https://github.com/digitalocean/doctl/releases/download/v1.148.0/doctl-1.148.0-linux-amd64.tar.gz
-    - source_hash: sha256=c691a57d82440e1dc9034ed845db7e56c810b17320e56ad0ec96999536bf9046
-    - enforce_toplevel: False
-    - if_missing: /usr/local/bin/doctl
+ensure_doctl_binary_exists:
+  cmd.run:
+    - name: /usr/local/sbin/update_doctl
+    - unless: test -f /usr/local/bin/doctl
 
 set_doctl_permissions:
   file.managed:
     - name: /usr/local/bin/doctl
     - mode: 755
     - replace: False
-    - require:
-      - archive: install_doctl
 
 # 3. Create the configuration directory
 doctl_config_dir:

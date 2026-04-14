@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Configuration
+VERSION_CMD="/usr/local/bin/doctl version"
+INSTALL_DIR="/usr/local/bin"
+TEMP_FILE="/tmp/doctl.tar.gz"
+SOURCE_URL="https://github.com/digitalocean/doctl/releases/latest/download/doctl-linux-amd64.tar.gz"
+
+# 1. Ask GitHub where 'latest' points, and grab the version from the resulting URL
+LATEST_VERSION=$(curl -sL -o /dev/null -w %{url_effective} https://github.com/digitalocean/doctl/releases/latest | grep -oP 'v\K[\d.]+')
+
+# 2. Construct the real URL using that version
+DOWNLOAD_URL="https://github.com/digitalocean/doctl/releases/download/v${LATEST_VERSION}/doctl-${LATEST_VERSION}-linux-amd64.tar.gz"
+
+# 1. Check if update is needed
+if ! $VERSION_CMD | grep -q "check it out"; then
+    # No update string found, exit silently
+    exit 0
+fi
+
+# 2. Get expected hash from your Salt pillar file
+EXPECTED_HASH=$(grep "doctl_sha256:" /opt/pillars/doctl.sls | cut -d\   -f2)
+
+# 3. Download
+echo Latest Version: $LATEST_VERSION
+curl -sL -o "$TEMP_FILE" "$DOWNLOAD_URL"
+
+# 4. Verify Integrity (CISA/CISSP Check)
+ACTUAL_HASH=$(sha256sum "$DOWNLOAD_URL" | cut -d\   -f1)
+
+if [ "$ACTUAL_HASH" != "$EXPECTED_HASH" ]; then
+    echo "Security Alert: Hash mismatch!"
+    echo "Expected: $EXPECTED_HASH"
+    echo "Actual:   $ACTUAL_HASH"
+    rm "$TEMP_FILE"
+    #exit 1
+fi
+
+# 5. Extract and Install
+tar -xzf "$TEMP_FILE" -C "$INSTALL_DIR"
+chmod +x "$INSTALL_DIR/doctl"
+
+# 6. Cleanup
+rm "$TEMP_FILE"
+echo "doctl updated successfully to $(/usr/local/bin/doctl version | head -n 1)"

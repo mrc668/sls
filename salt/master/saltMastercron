@@ -1,3 +1,5 @@
 # src: salt://sls/salt/master/saltMasterCron
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 4,9,14,19,24,29,34,39,44,49,54,59 * * * * root /usr/local/sbin/saltMasterStart
+7 2 * * * root /usr/local/sbin/doctl_update_hash
+14 2 * * * root /usr/local/sbin/update_doctl

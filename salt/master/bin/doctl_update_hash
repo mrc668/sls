@@ -1,0 +1,17 @@
+#!/bin/bash
+# Get the version string
+VERSION=$(curl -sL -o /dev/null -w %{url_effective} https://github.com/digitalocean/doctl/releases/latest | grep -oP 'v\K[\d.]+')
+echo Version: $VERSION
+echo "https://github.com/digitalocean/doctl/releases/download/v${VERSION}/doctl-${VERSION}-checksums.sha256"
+
+# Pull only the SHA256 hex for the linux-amd64 target
+SHA256=$( curl -sL "https://github.com/digitalocean/doctl/releases/download/v${VERSION}/doctl-${VERSION}-checksums.sha256" | grep "doctl-${VERSION}-linux-amd64.tar.gz" | cut -d\  -f1)
+echo Current Hash: $SHA256
+
+if [ -n "$SHA256" ]; then
+  sed -i "s/^\(doctl_sha256: \).*/\1$SHA256/" /opt/pillars/doctl.sls
+  echo update hash: $SHA256
+  # Refresh pillar data on all minions (or target specific ones)
+  salt salt\* saltutil.refresh_pillar
+fi
+
