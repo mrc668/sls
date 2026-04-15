@@ -1,0 +1,27 @@
+# --- Basic Configuration ---
+SecRuleEngine On
+SecRequestBodyAccess On
+SecRequestBodyLimit 13107200
+SecRequestBodyNoFilesLimit 131072
+
+# --- Response Body Handling ---
+SecResponseBodyAccess On
+SecResponseBodyLimit 524288
+SecResponseBodyMimeType text/plain text/html text/xml
+
+# --- Filesystem & Logging ---
+SecTmpDir /tmp/
+SecDataDir /tmp/
+SecAuditEngine RelevantOnly
+SecAuditLogRelevantStatus "^(?:5|4(?!04))"
+SecAuditLogType Serial
+SecAuditLog /var/log/nginx/modsec_audit.log
+
+# --- Rule Engine Defaults ---
+SecArgumentSeparator &
+SecCookieFormat 0
+SecUnicodeMapFile unicode.mapping 20127
+# Global defaults for what happens when a rule matches
+SecDefaultAction "phase:1,deny,log,status:500"
+SecDefaultAction "phase:2,deny,log,status:500"
+
