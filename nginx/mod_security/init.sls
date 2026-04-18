@@ -13,6 +13,8 @@ install_modsec_packages:
         # Global ModSecurity Configuration
         modsecurity on;
         modsecurity_rules_file /etc/nginx/modsec/main.conf;
+        # Test for a simple XSS attempt in the URL
+        # curl -I "http://159.203.56.209/loadTest/?test=<script>alert('hack')</script>"
     - user: root
     - group: root
     - mode: 644
@@ -48,13 +50,25 @@ install_modsec_packages:
       - pkg: install_modsec_packages
 
 # Ensure the log file exists and Nginx can write to it
-/var/log/nginx/modsec_audit.log:
+/dev/shm/modsec:
+  file.directory:
+    - user: nginx
+    - group: nginx
+    - mode: 755
+/dev/shm/modsec/modsec_audit.log:
   file.managed:
     - user: nginx
     - group: nginx
     - mode: 644
     - replace: False # Don't overwrite if it exists
 
+# Ensure the RAM-disk storage for IP collections exists
+/dev/shm/modsec/storage:
+  file.directory:
+    - user: nginx
+    - group: nginx
+    - mode: 700
+    - makedirs: True
 # Ensure unicode.mapping is present (adjust source path if needed)
 /etc/nginx/modsec/unicode.mapping:
   file.managed:

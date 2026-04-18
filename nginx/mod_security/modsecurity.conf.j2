@@ -1,13 +1,14 @@
 # --- Basic Configuration ---
-SecRuleEngine On
-SecRequestBodyAccess On
-SecRequestBodyLimit 13107200
-SecRequestBodyNoFilesLimit 131072
+SecRuleEngine {{ salt['pillar.get']('waf_settings:engine_mode', 'On') }}
+SecRequestBodyAccess On {{ salt['pillar.get']('waf_settings:secRequestBodyAccess', 'On') }}
+SecRequestBodyLimit {{ salt['pillar.get']('waf_settings:limits:request_body', '13107200') }}
+SecRequestBodyNoFilesLimit {{ salt['pillar.get']('waf_settings:limits:request_no_file', '131072') }}
 
 # --- Response Body Handling ---
 SecResponseBodyAccess On
-SecResponseBodyLimit 524288
-SecResponseBodyMimeType text/plain text/html text/xml
+SecResponseBodyLimit {{ salt['pillar.get']('waf_settings:limits:response_body', '524288') }}
+SecResponseBodyLimitAction ProcessPartial
+SecResponseBodyMimeType text/plain text/html text/xml application/json
 
 # --- Filesystem & Logging ---
 SecTmpDir /tmp/
@@ -15,13 +16,32 @@ SecDataDir /tmp/
 SecAuditEngine RelevantOnly
 SecAuditLogRelevantStatus "^(?:5|4(?!04))"
 SecAuditLogType Serial
-SecAuditLog /var/log/nginx/modsec_audit.log
+SecAuditLog /dev/shm/modsec/modsec_audit.log
 
 # --- Rule Engine Defaults ---
 SecArgumentSeparator &
 SecCookieFormat 0
 SecUnicodeMapFile unicode.mapping 20127
-# Global defaults for what happens when a rule matches
-SecDefaultAction "phase:1,deny,log,status:500"
-SecDefaultAction "phase:2,deny,log,status:500"
 
+# --- Global Defensive Posture ---
+# Pulls 444 or 500 from doTor-waf_data.sls
+SecDefaultAction "phase:1,deny,log,status:{{ salt['pillar.get']('waf_settings:block_status', '406') }}"
+SecDefaultAction "phase:2,deny,log,status:{{ salt['pillar.get']('waf_settings:block_status', '406') }}"
+
+# --- Dynamic Whitelisting ---
+# Only renders if exclusions are uncommented in the Pillar
+{% if salt['pillar.get']('waf_settings:exclusions') %}
+{% for entry in salt['pillar.get']('waf_settings:exclusions') %}
+# Exclusions for IP: {{ entry.ip }}
+SecRule REMOTE_ADDR "@ipMatch {{ entry.ip }}" \
+    "id:{{ loop.index + 1000 }},phase:1,pass,nolog,ctl:ruleRemoveById={{ entry.ids | join(',') }}"
+{% endfor %}
+{% endif %}
+# --- Performance & Protection Limits ---
+
+# Add this to prevent Nginx 500 errors on complex regex rules
+SecPcreMatchLimit {{ salt['pillar.get']('waf_settings:limits:pcre_match', '100000') }}
+SecPcreMatchLimitRecursion {{ salt['pillar.get']('waf_settings:limits:pcre_match', '100000') }}
+
+# Define what happens when a limit is hit
+SecRequestBodyLimitAction Reject
