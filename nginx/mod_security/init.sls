@@ -64,3 +64,10 @@ install_modsec_packages:
     - mode: 644
     - onlyif: test -f /usr/share/doc/libmodsecurity/unicode.mapping
 
+/etc/nginx/cond.d/modsec.conf:
+  file.managed:
+    - source: salt://nginx/mod_security/modsec.conf
+    - user: root
+    - group: root
+    - mode: 644
+
