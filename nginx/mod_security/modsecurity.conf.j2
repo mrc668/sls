@@ -1,6 +1,6 @@
 # --- Basic Configuration ---
 SecRuleEngine {{ salt['pillar.get']('waf_settings:engine_mode', 'On') }}
-SecRequestBodyAccess On {{ salt['pillar.get']('waf_settings:secRequestBodyAccess', 'On') }}
+SecRequestBodyAccess {{ salt['pillar.get']('waf_settings:secRequestBodyAccess', 'On') }}
 SecRequestBodyLimit {{ salt['pillar.get']('waf_settings:limits:request_body', '13107200') }}
 SecRequestBodyNoFilesLimit {{ salt['pillar.get']('waf_settings:limits:request_no_file', '131072') }}
 
@@ -23,11 +23,6 @@ SecArgumentSeparator &
 SecCookieFormat 0
 SecUnicodeMapFile unicode.mapping 20127
 
-# --- Global Defensive Posture ---
-# Pulls 444 or 500 from doTor-waf_data.sls
-SecDefaultAction "phase:1,deny,log,status:{{ salt['pillar.get']('waf_settings:block_status', '406') }}"
-SecDefaultAction "phase:2,deny,log,status:{{ salt['pillar.get']('waf_settings:block_status', '406') }}"
-
 # --- Dynamic Whitelisting ---
 # Only renders if exclusions are uncommented in the Pillar
 {% if salt['pillar.get']('waf_settings:exclusions') %}
@@ -45,3 +40,16 @@ SecPcreMatchLimitRecursion {{ salt['pillar.get']('waf_settings:limits:pcre_match
 
 # Define what happens when a limit is hit
 SecRequestBodyLimitAction Reject
+
+# --- Step 1: Initialize (Ensure phase is explicit) ---
+SecAction "id:3000,phase:1,nolog,pass,initcol:ip=%{remote_addr}"
+
+# --- Step 2: The Tarpit (Explicit phase and actions) ---
+SecRule ip:block_count "@gt 1" \
+    "id:3001,phase:1,deny,status:444,nolog,msg:'Dropping known scanner'"
+
+# --- Step 3: Record New Violations (The Phase 5 Fix) ---
+# ModSecurity v3 is picky about phase 5 (logging phase) syntax.
+# Remove 'pass' (which is for disruptive phases) and stick to the variable set.
+SecRule RESPONSE_STATUS "@eq 444" \
+    "id:3002,phase:5,nolog,setvar:ip.block_count=+1,expirevar:ip.block_count=3600"

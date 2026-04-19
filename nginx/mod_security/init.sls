@@ -1,3 +1,5 @@
+include:
+  - nginx
 # Install the ModSecurity library and Nginx module
 install_modsec_packages:
   pkg.installed:
@@ -44,8 +46,8 @@ install_modsec_packages:
   file.managed:
     - contents: |
         Include /etc/nginx/modsec/modsecurity.conf
-        Include /usr/share/modsecurity-crs/crs-setup.conf
-        Include /usr/share/modsecurity-crs/rules/*.conf
+        Include /etc/httpd/modsecurity.d/crs-setup.conf
+        Include /etc/httpd/modsecurity.d/local_rules/*.conf
     - require:
       - pkg: install_modsec_packages
 
@@ -72,16 +74,9 @@ install_modsec_packages:
 # Ensure unicode.mapping is present (adjust source path if needed)
 /etc/nginx/modsec/unicode.mapping:
   file.managed:
-    - source: /usr/share/doc/libmodsecurity/unicode.mapping
+    - source: /etc/nginx/unicode.mapping
     - user: root
     - group: root
     - mode: 644
-    - onlyif: test -f /usr/share/doc/libmodsecurity/unicode.mapping
-
-/etc/nginx/cond.d/modsec.conf:
-  file.managed:
-    - source: salt://nginx/mod_security/modsec.conf
-    - user: root
-    - group: root
-    - mode: 644
+    - onlyif: test -f /etc/nginx/unicode.mapping
 
