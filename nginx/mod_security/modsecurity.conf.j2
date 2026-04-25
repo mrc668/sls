@@ -12,19 +12,16 @@ SecResponseBodyMimeType text/plain text/html text/xml application/json
 
 # --- Filesystem & Logging ---
 SecTmpDir /tmp/
-SecDataDir /tmp/
+SecDataDir /var/lib/nginx/modsec/
 SecAuditEngine RelevantOnly
 SecAuditLogRelevantStatus "^(?:5|4(?!04))"
-SecAuditLogType Serial
-SecAuditLog /dev/shm/modsec/modsec_audit.log
+#SecAuditLogType Serial
+SecAuditLog /var/log/nginx/modsec_audit.log
 
-# --- Rule Engine Defaults ---
-SecArgumentSeparator &
-SecCookieFormat 0
-SecUnicodeMapFile unicode.mapping 20127
+# FIXED: Rocky 9 RPM path for unicode.mapping
+SecUnicodeMapFile /etc/nginx/unicode.mapping 20127
 
 # --- Dynamic Whitelisting ---
-# Only renders if exclusions are uncommented in the Pillar
 {% if salt['pillar.get']('waf_settings:exclusions') %}
 {% for entry in salt['pillar.get']('waf_settings:exclusions') %}
 # Exclusions for IP: {{ entry.ip }}
@@ -32,24 +29,27 @@ SecRule REMOTE_ADDR "@ipMatch {{ entry.ip }}" \
     "id:{{ loop.index + 1000 }},phase:1,pass,nolog,ctl:ruleRemoveById={{ entry.ids | join(',') }}"
 {% endfor %}
 {% endif %}
-# --- Performance & Protection Limits ---
 
-# Add this to prevent Nginx 500 errors on complex regex rules
+# --- Performance & Protection Limits ---
 SecPcreMatchLimit {{ salt['pillar.get']('waf_settings:limits:pcre_match', '100000') }}
 SecPcreMatchLimitRecursion {{ salt['pillar.get']('waf_settings:limits:pcre_match', '100000') }}
-
-# Define what happens when a limit is hit
 SecRequestBodyLimitAction Reject
 
-# --- Step 1: Initialize (Ensure phase is explicit) ---
+# --- Active Defense / Tarpit Logic ---
+# Step 1: Initialize IP collection
 SecAction "id:3000,phase:1,nolog,pass,initcol:ip=%{remote_addr}"
 
-# --- Step 2: The Tarpit (Explicit phase and actions) ---
-SecRule ip:block_count "@gt 1" \
-    "id:3001,phase:1,deny,status:444,nolog,msg:'Dropping known scanner'"
+# Step 2: The Tarpit
+# If block_count > threshold, deny with the Pillar-defined status (444)
+SecRule ip:block_count "@gt {{ salt['pillar.get']('waf_settings:active_defense:penalty_threshold', '1') }}" \
+    "id:3001,phase:1,deny,status:{{ salt['pillar.get']('waf_settings:block_status', '444') }},nolog,msg:'Dropping known scanner'"
 
-# --- Step 3: Record New Violations (The Phase 5 Fix) ---
-# ModSecurity v3 is picky about phase 5 (logging phase) syntax.
-# Remove 'pass' (which is for disruptive phases) and stick to the variable set.
-SecRule RESPONSE_STATUS "@eq 444" \
-    "id:3002,phase:5,nolog,setvar:ip.block_count=+1,expirevar:ip.block_count=3600"
+# Step 3: Record New Violations
+# Increment the block count if Nginx issues the block status
+SecRule RESPONSE_STATUS "@eq {{ salt['pillar.get']('waf_settings:block_status', '444') }}" \
+    "id:3002,phase:5,nolog,setvar:ip.block_count=+1,expirevar:ip.block_count={{ salt['pillar.get']('waf_settings:active_defense:expiry_seconds', '3600') }}"
+
+# --- OWASP Core Rule Set (Required to catch exec=/bin/bash) ---
+# These paths are standard for the mod_security_crs RPM on Rocky 9
+Include /etc/httpd/modsecurity.d/crs-setup.conf
+Include /usr/share/mod_modsecurity_crs/rules/*.conf
