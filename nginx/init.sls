@@ -11,14 +11,16 @@ nginx_snippets_dir:
     - require:
       - pkg: install_nginx
 
-# Deploy the global SSL policy snippet
-deploy_ssl_policy:
-  file.managed:
-    - name: /etc/nginx/snippets/ssl_policy.conf
-    - source: salt://nginx/snippets/ssl_policy.conf
+# Ensure the directory exists and sync all files within it
+deploy_nginx_snippets:
+  file.recurse:
+    - name: /etc/nginx/snippets
+    - source: salt://nginx/snippets
     - user: root
     - group: root
-    - mode: 644
+    - file_mode: '0644'
+    - dir_mode: '0755'
+    - clean: False
     - require:
       - file: nginx_snippets_dir
 
@@ -44,3 +46,21 @@ allow_nginx_network_connect:
     - name: httpd_can_network_connect
     - value: True
     - persist: True
+
+# Ensure the nginx user/group exists first
+nginx_user:
+  user.present:
+    - name: nginx
+    - system: True
+    - shell: /sbin/nologin
+
+# Manage the log directory ownership and permissions
+/var/log/nginx:
+  file.directory:
+    - user: nginx
+    - group: nginx
+    - mode: '0755'
+    - recurse:
+      - user
+      - group
+    - seltype: httpd_log_t
