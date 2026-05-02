@@ -1,0 +1,31 @@
+#!/bin/bash
+# source: salt://rootenv/rpm_tree.sls
+# Resolves file dependencies to their parent packages
+
+echo "digraph system_deps {"
+
+for PKG in $(rpm -qa --queryformat '%{NAME}\n' | sort); do
+    # Get the raw requirements, filtering out rpmlib and versioned symbols
+    REQS=$(rpm -q "$PKG" --requires | sed -e "s/(.*$//; s/ .*$//" | grep -Ev "rpmlib|libc.so.6|rtld" | sort -u)
+    
+    for REQ in $REQS; do
+        # If the requirement starts with a '/', it's a file path
+        if [[ $REQ == /* ]]; then
+            # Resolve the file path to a package name
+            # 2>/dev/null handles cases where a file isn't owned by any RPM
+            RESOLVED=$(rpm -qf "$REQ" --queryformat '%{NAME}' 2>/dev/null)
+            
+            # If resolved successfully, use the package name; otherwise, keep the file path
+            if [[ -n "$RESOLVED" ]]; then
+                REQ=$RESOLVED
+            fi
+        fi
+        
+        # Avoid self-referencing loops (e.g., pkgA -> pkgA)
+        if [ "$PKG" != "$REQ" ]; then
+            echo "  \"$PKG\" -> \"$REQ\";"
+        fi
+    done
+done | sort -u  # Filter duplicates at the end for a cleaner graph
+
+echo "}"
