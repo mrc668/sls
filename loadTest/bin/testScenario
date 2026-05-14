@@ -183,8 +183,8 @@ SUMMARY="${RESULTS_DIR}/summary.txt"
         LABEL=$(echo "${f}" | tr '.' '_')
         RPS=$(grep "^Requests per second:" "${RESULTS_DIR}/ab_${LABEL}.txt" | awk '{print $4, $5}')
         FAILED=$(grep "^Failed requests:" "${RESULTS_DIR}/ab_${LABEL}.txt" | awk '{print $3}')
-        P99=$(grep "^  99%" "${RESULTS_DIR}/ab_${LABEL}.txt" | awk '{print $2}' || echo "n/a")
-        echo "  ${f}: ${RPS}  failed=${FAILED}  p99=${P99}ms"
+        P95=$(grep "^  95%" "${RESULTS_DIR}/ab_${LABEL}.txt" | awk '{print $2}' || echo "n/a")
+        echo "  ${f}: ${RPS}  failed=${FAILED}  p95=${P95}ms"
     done
     echo ""
     echo "--- siege summary ---"
