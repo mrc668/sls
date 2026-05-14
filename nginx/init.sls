@@ -35,17 +35,6 @@ nginx_service:
     # This prevents Salt from breaking Nginx if a config is bad
     - check_cmd:
       - /usr/sbin/nginx -t
-# Dynamically include the personality sites based on the 'host' grain
-include:
-  - personality.{{ grains['host'] }}.sites
-
-# /srv/salt/hardening/nginx_selinux.sls
-
-allow_nginx_network_connect:
-  selinux.boolean:
-    - name: httpd_can_network_connect
-    - value: True
-    - persist: True
 
 # Ensure the nginx user/group exists first
 nginx_user:
@@ -64,3 +53,9 @@ nginx_user:
       - user
       - group
     - seltype: httpd_log_t
+
+# Dynamically include the personality sites based on the 'host' grain
+include:
+  - personality.{{ grains['host'] }}.sites
+  - nginx/security
+

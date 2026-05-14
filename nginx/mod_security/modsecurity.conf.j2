@@ -35,6 +35,13 @@ SecPcreMatchLimit {{ salt['pillar.get']('waf_settings:limits:pcre_match', '10000
 SecPcreMatchLimitRecursion {{ salt['pillar.get']('waf_settings:limits:pcre_match', '100000') }}
 SecRequestBodyLimitAction Reject
 
+# --- Default Block Action ---
+# This forces all 'deny' actions to use Nginx 444 (silent drop)
+#SecDefaultAction "phase:1,deny,log,status:444"
+#SecDefaultAction "phase:2,deny,log,status:444"
+# JK
+# Don't set this here/now... setup.conf below has one.
+
 # --- Active Defense / Tarpit Logic ---
 # Step 1: Initialize IP collection
 SecAction "id:3000,phase:1,nolog,pass,initcol:ip=%{remote_addr}"
