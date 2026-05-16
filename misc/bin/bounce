@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for i in $*; do
+	/sbin/ifdown $1
+	/sbin/ifup $1
+	shift
+done
+
+
